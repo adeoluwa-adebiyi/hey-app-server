@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ts-node-starter-app-orchestration
+spec:
+  selector:
+    matchLabels:
+      app: ts-node-starter-app-orchestration
+  template:
+    metadata:
+      labels:
+        app: ts-node-starter-app-orchestration
+    spec:
+      containers:
+      - name: ts-node-starter-app-orchestration
+        image: ts-node-starter
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
