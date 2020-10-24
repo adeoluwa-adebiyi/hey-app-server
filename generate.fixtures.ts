@@ -32,7 +32,7 @@ const create_fake_user = (index:number)=>{
 
 var list = new Array();
 
-for(let start:number=1; start < 101; start++){
+for(let start:number=1; start < 10; start++){
     list.push(create_fake_user(start));
 }
 

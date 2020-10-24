@@ -20,6 +20,7 @@ const database: DatabaseSpec = container.resolve("DatabaseSpec");
 
 let users:Array<UserModel> = [];
 
+
 describe("Tests ChatRoomRepository", ()=>{
 
     before(async ()=>{
@@ -28,7 +29,7 @@ describe("Tests ChatRoomRepository", ()=>{
             await database.connect();
             await seedDB(database);
         });
-    })
+    });
 
     // it("Should get user chatrooms", (done)=>{
     //     userRepository.deleteUser({...userRegistrationCredentials}).then((queryRes)=>{
@@ -47,25 +48,33 @@ describe("Tests ChatRoomRepository", ()=>{
 
 
     it("Should create valid chatrooms for users", (done)=>{
+
         const expectedChatRoomUserEmails = users.slice(0,2).map(user=>user.email);
         Promise.all(
             [...expectedChatRoomUserEmails.map(email=>userRepository.getUserById({email}))]
         ).then((values)=>{
-            // console.log(`USERS: ${JSON.stringify(values)}`);
-            // const expectedUserIds = values.map((value)=>value.id);
-            // chatRoomRepo.createChatRoom(values).then((chatRooms)=>{
-            //         expect(JSON.stringify(expectedUserIds)).to.equal(JSON.stringify(
-            //             chatRooms.map(chatRoom=>chatRoom.id)
-            //         ));
-            //         done();
-            // }).
-            // then(e=>{
-            //     console.log(`ERROR: ${e}`)
-            //     done(e);
-            // })
+
+            console.log(`USERS: ${JSON.stringify(values)}`);
+            const expectedUserIds = values.map((value)=>value.id);
+
+            chatRoomRepo.createChatRoom(values).then((chatRooms)=>{
+
+                    expect(JSON.stringify(expectedUserIds)).to.equal(JSON.stringify(
+                        chatRooms.map(chatRoom=>chatRoom.id)
+                    ));
+                    done();
+
+            }).
+            then(e=>{
+                console.log(`ERROR: ${e}`)
+                done(e);
+            });
+
         }).catch(e=>{
             console.log(e);
             done(e);
         });
-    })
+        
+    });
+
 });

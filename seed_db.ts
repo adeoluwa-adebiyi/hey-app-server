@@ -1,10 +1,6 @@
 import fs from "fs";
 import path from "path";
-
-import { env } from "custom-env";
-import { Client } from "pg";
 import { CHATROOM_TABLE_NAME, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USERNAME, USER_TABLE_NAME } from  "./app/config/app.config";
-import { PostgresDatabase } from "./app/data/datasources/postgres.database";
 import { exit } from "process";
 import { DatabaseSpec } from "./app/data/datasources/datasource.interface";
 
@@ -46,8 +42,8 @@ export const seedDB = (async(db: DatabaseSpec)=>{
 });
 
 
-export const emptyDB = async(db: DatabaseSpec)=>{
-    db.connect().then((connMsg:any)=>{
+export const emptyDB = async(db: DatabaseSpec): Promise<any> =>{
+    return db.connect().then((connMsg:any)=>{
         return Promise.all([db.getConnector().query(`DELETE FROM ${TABLE_NAME}`),
         db.getConnector().query(`DELETE FROM ${CHATROOM_TABLE_NAME}`)])
     });
