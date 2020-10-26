@@ -39,12 +39,8 @@ describe("Tests AuthenticateUser usecase functionality", ()=>{
         setTimeout(()=>
             database.getConnector().query(`DELETE FROM ${USER_TABLE} where email = $1 `,[userLoginCredentials.username]).then(()=>{
             new RegisterUserUsecase().execute({...userLoginCredentials, email: userLoginCredentials.username}).then(async (userRegResponse: UserRegistrationResponse)=>{
-                console.log("USER_REG_RESPONSE:");
-                console.log(userRegResponse);
                 const authToken = await new AuthenticateUserUsecase().execute({...userLoginCredentials});
                 tokenAuthSpec.verify( authToken.accessToken, (err:any, validatedToken:string)=>{
-                    console.log("ERR: "+JSON.stringify(err));
-                    console.log("TOKEN: "+JSON.stringify(validatedToken));
                     expect(err).to.equal(null);
                     expect(validatedToken).to.be.instanceOf(Object);
                     done();
@@ -56,16 +52,13 @@ describe("Tests AuthenticateUser usecase functionality", ()=>{
                 done(e);
                 })
     //    })
-        , 10000);
+        , 1000);
     }); 
 
     it("Should return InvalidLoginCredentialsException for invalid login credentials", (done)=>{
         setTimeout(()=>
         database.getConnector().query(`DELETE FROM ${USER_TABLE} where email = $1 `,[userLoginCredentials.username]).then(()=>{
         new RegisterUserUsecase().execute({...userLoginCredentials, email: userLoginCredentials.username}).then(async (userRegResponse: UserRegistrationResponse)=>{
-
-            console.log("USER_REG_RESPONSE:");
-            console.log(userRegResponse);
             
             try{
                 const authToken = await new AuthenticateUserUsecase().execute({...userLoginCredentials, password: invalidPassword});
@@ -78,7 +71,7 @@ describe("Tests AuthenticateUser usecase functionality", ()=>{
 
             });
            })
-        ,10000);
+        ,1000);
     }); 
 
 })
