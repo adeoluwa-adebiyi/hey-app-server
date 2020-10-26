@@ -1,31 +1,31 @@
-# on:
-#   push:
-#     branches: ["master"]
+on:
+  push:
+    branches: ["master"]
   
-#   pull_request:
-#     branches: ["master"]
+  pull_request:
+    branches: ["master"]
 
-#   release:
-#     types: [created]
+  release:
+    types: [created]
 
-# name: Deploy to Amazon ECS
+name: Deploy to Amazon ECS
 
-# jobs:
-#   test:
-#      name: Test
-#      runs-on: ubuntu-latest
+jobs:
+  test:
+     name: Test
+     runs-on: ubuntu-latest
      
-#      steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
+     steps:
+     - name: Checkout
+       uses: actions/checkout@v2
        
-#      - name: Install project dependencies
-#        run: |
-#           npm install
+     - name: Install project dependencies
+       run: |
+          npm install
        
-#      - name: Run tests
-#        run: |
-#           sudo npm run test
+     - name: Run tests
+       run: |
+          sudo npm run test
        
   # deploy:
   #   name: Deploy
