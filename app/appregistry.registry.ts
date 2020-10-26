@@ -33,11 +33,19 @@ DATABASE.setConnection(DB_HOST, Number(DB_PORT), DB_USERNAME, DB_NAME, DB_PASSWO
 
 
 container.register<DatabaseSpec>("DatabaseSpec", { useValue: DATABASE });
+
 container.register<UserRepositorySpec>("UserRepositorySpec", { useClass: PgSQLUserRepository });
+
 container.register<ChatRoomRepositorySpec>("ChatRoomRepositorySpec", { useClass: ChatRoomRepository });
+
 container.register<TokenAuthSpec>("TokenAuthSpec", {useValue: new JWTTokenAuthAlgorithm(APP_SECRET)});
+
 container.register<AuthenticationSpec<express.RequestHandler>>("AuthenticationSpec<<express.RequestHandler>>", { useClass: JWTAuthentication });
+
 container.register<PasswordHasherSpec>("PasswordHasherSpec", { useValue: new Argon2PasswordHasher() });
+
 const httpServer: ExpressWebServer = new ExpressWebServer(container.resolve("AuthenticationSpec<<express.RequestHandler>>"), EXEMPTED_ROUTES);
+
 (<MiddlewareConfigurable>httpServer).addMiddleware(bodyParser.json());
+
 container.register<RoutableWebServerSpec>("RoutableWebServerSpec", { useValue: httpServer });

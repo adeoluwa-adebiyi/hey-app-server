@@ -39,7 +39,9 @@ describe("Tests ChatRoomRepository", ()=>{
     });
 
     // it("Should get user chatrooms", (done)=>{
-    //     userRepository.deleteUser({...userRegistrationCredentials}).then((queryRes)=>{
+
+    //     console.log("WAITING FOR DB SEED");
+    //     setTimeout(()=>userRepository.deleteUser({...userRegistrationCredentials}).then((queryRes)=>{
     //         userRepository.createUser({...userRegistrationCredentials}).then((user)=>{
     //             const userModel:UserModel =  new UserModel().fromJSON({...userRegistrationCredentials});
     //             chatRoomRepo.getUserChatRooms(userModel).then((chatRooms)=>{
@@ -50,7 +52,8 @@ describe("Tests ChatRoomRepository", ()=>{
     //                 done();
     //             }).catch(e=>done(e));
     //         }).catch(e=>done(e));
-    //     }).catch(e=>done(e));
+    //     }).catch(e=>done(e)), 10000);
+        
     // })
 
 

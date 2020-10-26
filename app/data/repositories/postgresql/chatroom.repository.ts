@@ -4,8 +4,8 @@ import { ChatRoomRepositorySpec, UserRepositorySpec } from "../repository.interf
 import "reflect-metadata";
 import { autoInjectable, inject } from "tsyringe";
 import { DatabaseSpec } from "../../datasources/datasource.interface";
-import { ChatRoomModel } from "../../../domain/entities/chatroom.model";
-import { CHATROOM_TABLE_NAME, USER_TABLE_NAME } from "../../../config/app.config";
+import { ChatRoomModel, ChatRoomModelJSON } from "../../../domain/entities/chatroom.model";
+import { CHATROOM_TABLE_NAME, DB_HOST, USER_TABLE_NAME } from "../../../config/app.config";
 import { PostgresDatabase } from "../../datasources/postgres.database";
 import { v4, v1 } from "uuid";
 import { transformToChatModelJSON } from "./transformers";
@@ -15,6 +15,7 @@ import { response } from "express";
 const CHAT_ROOM_TABLE = "chatroom";
 const USER_TABLE = USER_TABLE_NAME;
 const CREATE_CHATROOM_QUERY = "INSERT into chatroom(room_key, user_id)  VALUES( ${roomKey}, ( SELECT id FROM bb where email = ${email} )  ) RETURNING *";
+const GET_USER_CHAT_ROOMS_QUERY = "SELECT * FROM chatroom where user_id = $1";
 // const CREATE_CHATROOM_QUERY = `SELECT * FROM chatroom`;
 
 
@@ -29,8 +30,12 @@ export class ChatRoomRepository implements ChatRoomRepositorySpec{
         throw new Error("Method not implemented.");
     }
 
-    getUserChatRooms(user: UserModel): Promise<Array<ChatRoomModel>> {
-        throw new Error("Method not implemented.");
+    async getUserChatRooms(user: UserModel): Promise<Array<ChatRoomModel>> {
+        const { id } = user.toJSON();
+        const response = await (this.database.getConnector()).query(GET_USER_CHAT_ROOMS_QUERY, [id]);
+        console.log("RESPONSE:");
+        console.log(response);
+        return response.map((chatRoomData:any)=> new ChatRoomModel().fromJSON(transformToChatModelJSON(chatRoomData)));
     }
 
     async createChatRoom(users: UserModel[]): Promise<ChatRoomModel[]> {
