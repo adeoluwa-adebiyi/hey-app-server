@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx ts-node app/app.entry.ts --types ./typings/custom-env/index.d.ts ",
-    "test": "npx mocha -r ts-node/register test/**/**.ts specs --no-timeout",
+    "test": "npx mocha -r ts-node/register test/**/*.ts specs --no-timeout",
     "start:watch": "npx nodemon --watch 'app/**/*.ts' --ignore 'app/**/*.spec.ts' --exec 'ts-node' app/app.entry.ts"
   },
   "author": "QodeZilla",
@@ -26,6 +26,7 @@
     "@types/dotenv": "^8.2.0",
     "@types/faker": "^5.1.2",
     "@types/pg": "^7.14.5",
+    "@types/pg-promise": "^5.4.3",
     "@types/spdy": "^3.4.4",
     "@types/sqlite3": "^3.1.6",
     "@types/uuid": "^8.3.0",
@@ -38,6 +39,7 @@
     "dts-gen": "^0.6.0",
     "express": "^4.17.1",
     "faker": "^5.1.0",
+    "husky": "^4.3.0",
     "joi": "^17.2.1",
     "knex": "^0.21.6",
     "knex-ts": "0.0.4",
@@ -47,6 +49,7 @@
     "node-postgres": "^0.6.2",
     "nodemon": "^2.0.4",
     "pg": "7.0.0",
+    "pg-promise": "^10.7.1",
     "reflect-metadata": "^0.1.13",
     "secure-random": "^1.1.2",
     "spdy": "^4.0.2",

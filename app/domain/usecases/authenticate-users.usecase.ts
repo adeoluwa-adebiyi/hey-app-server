@@ -30,7 +30,8 @@ export class AuthenticateUserUsecase implements UseCaseSpec<Promise<AuthTokenMod
     constructor(
         @inject("UserRepositorySpec") private userRepository?: UserRepositorySpec, 
         @inject("TokenAuthSpec") private tokenAuthALgporithm?: JWTTokenAuthAlgorithm, 
-        @inject("PasswordHasherSpec") private passswordHasher?: PasswordHasherSpec){}
+        @inject("PasswordHasherSpec") private passswordHasher?: PasswordHasherSpec
+        ){}
 
     async execute(params: UserLoginCredentials): Promise<AuthTokenModel> {
         try{

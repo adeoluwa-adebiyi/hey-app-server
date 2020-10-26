@@ -15,7 +15,8 @@ export class JWTAuthentication implements AuthenticationSpec<express.RequestHand
             try{
 
                 for(let route of exemptedRoutes){
-                    if(req.baseUrl.startsWith(route)){
+                    if(req.originalUrl === route){
+                        console.log("EQUAL: "+true);
                         exempted = true;
                         break;
                     }

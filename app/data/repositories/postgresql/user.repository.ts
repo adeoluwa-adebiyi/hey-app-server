@@ -8,6 +8,9 @@ import { InvalidArgumentsException } from "../../../common/exceptions/invalid-ar
 import { RegisterUserUsecaseParams } from "../../../domain/usecases/register-user.usecase";
 import { DatabaseSpec } from "../../datasources/datasource.interface";
 import { UserRepositorySpec } from "../repository.interface";
+import { IConnected } from "pg-promise";
+import { IClient } from "pg-promise/typescript/pg-subset";
+
 
 
 const USER_TABLE = "bb";
@@ -57,38 +60,35 @@ export class PgSQLUserRepository implements UserRepositorySpec{
     }
 
     async getUserById(userId: UserAuthId): Promise<UserModel> {
+
         const {email, id } = userId;
         if(id){
             const response = await ((this.getDatabaseConnector())).query(GET_USER_BY_ID_QUERY,[id]);
-            console.log("API RESPONSE:");
-            if(!response || response.rows.length===0){
-                console.log("FAILED TO RETRIEVE GET USER RESPONSE")
+            if(!response){
                 throw new ObjectNotFoundException(`User with id ${id} does not exist`);
             }
-
-            return new UserModel().fromJSON(( response.rows[0] ));
+            return new UserModel().fromJSON(( response[0] ));
         }
 
         if(email){
             const response = await ((this.getDatabaseConnector())).query(GET_USER_BY_EMAIL_QUERY,[email]);
-            if(!response || response.rows.length===0)
-                throw new ObjectNotFoundException(`User with id ${email} does not exist`);
- 
-            return new UserModel().fromJSON(response.rows[0]);
+            console.log(response);
+            if(!response)
+                throw new ObjectNotFoundException(`User with email ${email} does not exist`);
+
+            return new UserModel().fromJSON(response[0]);
         }
         
     }
 
     async createUser(userCredentials: UserWithAuthCredJSON): Promise<UserModel> {
-            const { firstname, lastname, dob, email, passwordHash } = userCredentials;
-            console.log("RESPONSE:");
-            const response = await (
-                this.getDatabaseConnector().query(CREATE_NEW_USER_QUERY,[ firstname, lastname, dob, email, passwordHash ]));
-            console.log(response.rows);
-                return new UserModel().fromJSON( response.rows[0]);
+        const { firstname, lastname, dob, email, passwordHash } = userCredentials;
+        const response = await (
+        this.getDatabaseConnector().one(CREATE_NEW_USER_QUERY,[ firstname, lastname, dob, email, passwordHash ]));
+        return new UserModel().fromJSON( response );
     }
     
-    getDatabaseConnector(): Pool {
+    getDatabaseConnector(): IConnected<{}, IClient> {
         return this.database.getConnector();
     }
 

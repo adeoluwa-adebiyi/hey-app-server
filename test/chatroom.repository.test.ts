@@ -21,14 +21,21 @@ const database: DatabaseSpec = container.resolve("DatabaseSpec");
 let users:Array<UserModel> = [];
 
 
+
 describe("Tests ChatRoomRepository", ()=>{
 
-    before(async ()=>{
+    before((done)=>{
         users = JSON.parse(fs.readFileSync(path.resolve("./app/data/fixtures/users.fixture.json")).toString()).users.map((user:any)=>new UserModel().fromJSON(user));
-        emptyDB(database).then(async()=>{
-            await database.connect();
-            await seedDB(database);
-        });
+        database.connect().then((v:any)=>{
+            console.log("V:"+v);
+             emptyDB(database).then((q:any)=>{
+                console.log("Q:"+q);
+                 seedDB(database).then((res:any)=>{
+                    console.log("DONE");
+                    done();
+                })
+            });
+        })
     });
 
     // it("Should get user chatrooms", (done)=>{
@@ -49,32 +56,32 @@ describe("Tests ChatRoomRepository", ()=>{
 
     it("Should create valid chatrooms for users", (done)=>{
 
-        const expectedChatRoomUserEmails = users.slice(0,2).map(user=>user.email);
-        Promise.all(
-            [...expectedChatRoomUserEmails.map(email=>userRepository.getUserById({email}))]
-        ).then((values)=>{
+        console.log("WAITING FOR DB SEED");
+        setTimeout(()=>{
+                const expectedChatRoomUserEmails = users.slice(0,2).map(user=>user.email);
+                Promise.all([...expectedChatRoomUserEmails.map(email=>userRepository.getUserById({email}))])
+                .then((values:UserModel[])=>{
 
-            console.log(`USERS: ${JSON.stringify(values)}`);
-            const expectedUserIds = values.map((value)=>value.id);
+                    console.log(`USERS: ${JSON.stringify(values)}`);
+                    chatRoomRepo.createChatRoom(values).then((chatRooms)=>{
 
-            chatRoomRepo.createChatRoom(values).then((chatRooms)=>{
+                        console.log("CHATROOMS:'");
+                        console.log(chatRooms);
+                            expect(JSON.stringify(values.map(value=>value.id))).to.equal(
+                                JSON.stringify(chatRooms.map(chatRoom=>chatRoom.userId)));
+                            done();
 
-                    expect(JSON.stringify(expectedUserIds)).to.equal(JSON.stringify(
-                        chatRooms.map(chatRoom=>chatRoom.id)
-                    ));
-                    done();
+                    }).
+                    catch(e=>{
+                        console.log(`ERROR: ${e}`)
+                        done(e);
+                    });
 
-            }).
-            then(e=>{
-                console.log(`ERROR: ${e}`)
-                done(e);
-            });
-
-        }).catch(e=>{
-            console.log(e);
-            done(e);
-        });
-        
+                }).catch(e=>{
+                    console.log(e);
+                    done(e);
+                });    
+            }, 10000);
     });
 
 });

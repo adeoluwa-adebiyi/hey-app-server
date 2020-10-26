@@ -30,6 +30,8 @@ export class RegisterUserUsecase implements UseCaseSpec<Promise<UserRegistration
     constructor(@inject("PasswordHasherSpec") private passwordHasher?: PasswordHasherSpec, @inject("UserRepositorySpec") private userRepository?: UserRepositorySpec){}
 
     async execute(params: RegisterUserUsecaseParams): Promise<UserRegistrationResponse> {
+        console.log("PARAMS:");
+        console.log(params);
         if(!params)
             throw new InvalidArgumentsException("");
 

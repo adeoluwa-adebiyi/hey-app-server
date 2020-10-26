@@ -1,11 +1,13 @@
+import Db, { IConnected } from "pg-promise";
 import { Client, Pool } from "pg";
 import { InvalidArgumentsException } from "../../common/exceptions/invalid-arguments.exception";
 import { CredentialDatabase, UrlDatabase } from "./datasource.interface";
 import path from "path";
+import { IClient } from "pg-promise/typescript/pg-subset";
 
-export class PostgresDatabase implements CredentialDatabase<Pool>{
+export class PostgresDatabase implements CredentialDatabase<IConnected<{}, IClient>>{
 
-    private client: Pool;
+    private client: IConnected<{}, IClient>;
     private url: string;
     private host: string;
     private port: number;
@@ -32,6 +34,8 @@ export class PostgresDatabase implements CredentialDatabase<Pool>{
     }
 
     async connect() {
+        if(this.client)
+            return this.client;
         if(!this.host)
             throw new InvalidArgumentsException("database host cannot be null!");
 
@@ -47,7 +51,22 @@ export class PostgresDatabase implements CredentialDatabase<Pool>{
         // if(!this.password)
         //     throw new InvalidArgumentsException("database password cannot be null!");
 
-        this.client = new Pool({
+    //     this.client = new Pool({
+    //     host: this.host,
+    //     port: this.port,
+    //     user: this.user,
+    //     database: this.database,
+    //     password: this.password,
+    //     // ssl:true
+    //     // ssl:{
+    //     //     cert: path.resolve("./app/data/datasources/pg.pem")
+    //     // }
+    //     // keepAlive: 
+    //    })
+
+       const db = Db({
+        // Initialization Options
+        })({
         host: this.host,
         port: this.port,
         user: this.user,
@@ -58,12 +77,13 @@ export class PostgresDatabase implements CredentialDatabase<Pool>{
         //     cert: path.resolve("./app/data/datasources/pg.pem")
         // }
         // keepAlive: false
-       })
+       });
 
-       return await this.client.connect();
+       this.client = await db.connect();
+       return this.client;
     }
     
-    getConnector():Pool {
+    getConnector():IConnected<{}, IClient> {
         return this.client;
     }
 }

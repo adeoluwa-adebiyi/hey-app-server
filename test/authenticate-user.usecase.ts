@@ -14,7 +14,6 @@ import { userLoginCredentials } from "./test.data";
 import { TokenAuthSpec } from "../app/server/contracts/tokenauthspec.interface";
 import { emptyDB, seedDB } from "../seed_db";
 import { InvalidLoginCredentialsException } from "../app/common/exceptions/invalid-login-credentials.exception";
-import { Client } from "pg";
 
 
 
@@ -28,48 +27,58 @@ const invalidPassword = "itsacrazyworld";
 describe("Tests AuthenticateUser usecase functionality", ()=>{
 
     before(async ()=>{
+        await database.connect();
         emptyDB(database).then(async()=>{
-            await database.connect();
             await seedDB(database);
         });
     })
 
     const { username, password } = userLoginCredentials;
 
-    it("Should return valid AuthTokenModels for valid login credentials", ()=>{
-        return new Promise((resolve, reject)=>{database.getConnector().query(`DELETE FROM ${USER_TABLE} where email = $1 `,[userLoginCredentials.username]).then((queryRes:any)=>{
-        new RegisterUserUsecase().execute({...userLoginCredentials, email: userLoginCredentials.username}).then((userRegResponse: UserRegistrationResponse)=>{
-            new AuthenticateUserUsecase().execute({...userLoginCredentials}).then((authToken)=>{
+    it("Should return valid AuthTokenModels for valid login credentials", (done)=>{
+        setTimeout(()=>
+            database.getConnector().query(`DELETE FROM ${USER_TABLE} where email = $1 `,[userLoginCredentials.username]).then(()=>{
+            new RegisterUserUsecase().execute({...userLoginCredentials, email: userLoginCredentials.username}).then(async (userRegResponse: UserRegistrationResponse)=>{
+                console.log("USER_REG_RESPONSE:");
+                console.log(userRegResponse);
+                const authToken = await new AuthenticateUserUsecase().execute({...userLoginCredentials});
                 tokenAuthSpec.verify( authToken.accessToken, (err:any, validatedToken:string)=>{
+                    console.log("ERR: "+JSON.stringify(err));
+                    console.log("TOKEN: "+JSON.stringify(validatedToken));
                     expect(err).to.equal(null);
                     expect(validatedToken).to.be.instanceOf(Object);
-                    resolve();
-                   });
-                }).catch(e=>reject(e));
-            }).catch(e=>reject(e));
-           });
-       });
+                    done();
+                });
+                });
+            }).catch((e:any)=>{
+                console.log("Error: ");
+                console.log(e);
+                done(e);
+                })
+    //    })
+        , 10000);
     }); 
 
-    it("Should return InvalidLoginCredentialsException for invalid login credentials", ()=>{
-        return new Promise((resolve, reject)=>{database.getConnector().query(`DELETE FROM ${USER_TABLE} where email = $1 `,[userLoginCredentials.username]).then((queryRes:any)=>{
-        new RegisterUserUsecase().execute({...userLoginCredentials, email: userLoginCredentials.username}).then( (userRegResponse: UserRegistrationResponse)=>{
+    it("Should return InvalidLoginCredentialsException for invalid login credentials", (done)=>{
+        setTimeout(()=>
+        database.getConnector().query(`DELETE FROM ${USER_TABLE} where email = $1 `,[userLoginCredentials.username]).then(()=>{
+        new RegisterUserUsecase().execute({...userLoginCredentials, email: userLoginCredentials.username}).then(async (userRegResponse: UserRegistrationResponse)=>{
+
+            console.log("USER_REG_RESPONSE:");
+            console.log(userRegResponse);
             
-                new AuthenticateUserUsecase().execute({...userLoginCredentials, password: invalidPassword}).then((authToken)=>{
-                    expect(authToken).to.equal(undefined);
-                    resolve();
-                }).catch(e=>{
-                    expect(e).to.be.instanceOf(InvalidLoginCredentialsException);
-                    reject();
-                });
+            try{
+                const authToken = await new AuthenticateUserUsecase().execute({...userLoginCredentials, password: invalidPassword});
+                expect(authToken).to.equal(undefined);
+                done(Error("Test Failed"));
+            }catch(e){
+                expect(e).to.be.instanceOf(InvalidLoginCredentialsException);
+                done();
+            }
+
             });
            })
-       })
+        ,10000);
     }); 
-
-
-    // after(async()=>{
-    //     await (<Client>database.getConnector()).end();
-    // })
 
 })

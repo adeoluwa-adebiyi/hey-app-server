@@ -10,7 +10,6 @@ const router: Router = Router();
 router.post("/", async(req:Request, res: Response)=>{
     try{
         const params = req.body;
-        console.log(`PARAMS: ${JSON.stringify(params)}`);
         const response = await new AuthenticateUserUsecase().execute({...params});
         res.send({
             data:{
