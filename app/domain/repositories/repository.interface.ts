@@ -1,6 +1,6 @@
 import { QueryResult } from "pg";
-import { ChatRoomModel } from "../../domain/entities/chatroom.model";
-import { UserAuthId, UserModel } from "../../domain/entities/user.model";
+import { ChatRoomModel } from "../entities/chatroom.model";
+import { UserAuthId, UserModel } from "../entities/user.model";
 
 export interface BaseRepository{
     getDatabaseConnector():any;

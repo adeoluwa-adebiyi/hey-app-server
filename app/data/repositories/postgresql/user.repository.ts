@@ -7,10 +7,9 @@ import { UserAuthId, UserModel, UserWithAuthCredJSON } from "../../../domain/ent
 import { InvalidArgumentsException } from "../../../common/exceptions/invalid-arguments.exception";
 import { RegisterUserUsecaseParams } from "../../../domain/usecases/register-user.usecase";
 import { DatabaseSpec } from "../../datasources/datasource.interface";
-import { UserRepositorySpec } from "../repository.interface";
 import { IConnected } from "pg-promise";
 import { IClient } from "pg-promise/typescript/pg-subset";
-
+import { UserRepositorySpec } from "../../../domain/repositories/repository.interface";
 
 
 const USER_TABLE = "bb";
@@ -72,7 +71,7 @@ export class PgSQLUserRepository implements UserRepositorySpec{
 
         if(email){
             const response = await ((this.getDatabaseConnector())).query(GET_USER_BY_EMAIL_QUERY,[email]);
-            if(!response)
+            if(response.length ===0)
                 throw new ObjectNotFoundException(`User with email ${email} does not exist`);
 
             return new UserModel().fromJSON(response[0]);

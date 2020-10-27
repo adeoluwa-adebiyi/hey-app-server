@@ -35,5 +35,5 @@ export const USER_REGISTRATION_CREDENTIALS = {
 export const userLoginCredentials:UserLoginCredentials = {
     username: USER_REGISTRATION_CREDENTIALS.email,
     // username:"wilkinson@mail.com",
-    password: "testuser123"
+    password: USER_REGISTRATION_CREDENTIALS.password
 } 

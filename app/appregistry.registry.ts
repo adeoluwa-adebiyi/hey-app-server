@@ -10,7 +10,6 @@ import { ExpressWebServer } from "./server/express.webserver";
 import express from "express";
 import { Argon2PasswordHasher } from "./common/core/hashers/argon2.passwordhasher";
 import { PasswordHasherSpec } from "./common/core/hashers/contract/hasher.interface";
-import { ChatRoomRepositorySpec, UserRepositorySpec } from "./data/repositories/repository.interface";
 import { DatabaseSpec } from "./data/datasources/datasource.interface";
 import { SECRET, DB_HOST, DB_PORT, DB_USERNAME, DB_NAME, DB_PASSWORD } from "./config/app.config"
 import { PostgresDatabase } from "./data/datasources/postgres.database";
@@ -18,6 +17,7 @@ import { PgSQLUserRepository } from "./data/repositories/postgresql/user.reposit
 import bodyParser from "body-parser";
 import { ChatRoomRepository } from "./data/repositories/postgresql/chatroom.repository";
 import "./common/utils/console-log-disable";
+import { UserRepositorySpec, ChatRoomRepositorySpec } from "./domain/repositories/repository.interface";
 
 const APP_SECRET = SECRET;
 
