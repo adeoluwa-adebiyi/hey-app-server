@@ -17,7 +17,8 @@ import { PgSQLUserRepository } from "./data/repositories/postgresql/user.reposit
 import bodyParser from "body-parser";
 import { ChatRoomRepository } from "./data/repositories/postgresql/chatroom.repository";
 import "./common/utils/console-log-disable";
-import { UserRepositorySpec, ChatRoomRepositorySpec } from "./domain/repositories/repository.interface";
+import { UserRepositorySpec, ChatRoomRepositorySpec, ChatRoomMessageRepositorySpec } from "./domain/repositories/repository.interface";
+import { ChatRoomMessageRepository } from "./data/repositories/postgresql/chat-room-message.repository";
 
 const APP_SECRET = SECRET;
 
@@ -37,6 +38,8 @@ container.register<DatabaseSpec>("DatabaseSpec", { useValue: DATABASE });
 container.register<UserRepositorySpec>("UserRepositorySpec", { useClass: PgSQLUserRepository });
 
 container.register<ChatRoomRepositorySpec>("ChatRoomRepositorySpec", { useClass: ChatRoomRepository });
+
+container.register<ChatRoomMessageRepositorySpec>("ChatRoomMessageRepositorySpec", { useClass: ChatRoomMessageRepository });
 
 container.register<TokenAuthSpec>("TokenAuthSpec", {useValue: new JWTTokenAuthAlgorithm(APP_SECRET)});
 

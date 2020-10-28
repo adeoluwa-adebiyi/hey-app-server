@@ -1,9 +1,12 @@
 import { QueryResult } from "pg";
+import { ChatRoomMessageModel } from "../entities/chat-room-message.model";
 import { ChatRoomModel } from "../entities/chatroom.model";
 import { UserAuthId, UserModel } from "../entities/user.model";
 
 export interface BaseRepository{
+
     getDatabaseConnector():any;
+
 }
 
 export interface UserRepositorySpec extends BaseRepository{
@@ -26,5 +29,18 @@ export interface ChatRoomRepositorySpec extends BaseRepository{
     createChatRoom(users: Array<UserModel>): Promise<Array<ChatRoomModel>>;
 
     deleteChatRoom(chatRoomId: number): Promise<void>;
+
+}
+
+
+export interface ChatRoomMessageRepositorySpec extends BaseRepository{
+
+    getChatRoomMessages(id:number, limit:number): Promise<Array<ChatRoomMessageModel>>;
+
+    deleteChatRoomMessage(id:number): Promise<any>;
+
+    getChatRoomMessage(id: number): Promise<ChatRoomMessageModel>;
+
+    postMessage(message: ChatRoomMessageModel): Promise<ChatRoomMessageModel>;
 
 }
