@@ -61,7 +61,7 @@ db.setConnection(DB_HOST, Number(DB_PORT), DB_USERNAME, DB_NAME, DB_PASSWORD);
             `);
             console.log("RESPONSE:");
             console.log(JSON.stringify(response));
-            exit(0);
+            db.getConnector().done(true);
         }catch(e){
             console.log("EXCEPTION:");
             console.log(e);
