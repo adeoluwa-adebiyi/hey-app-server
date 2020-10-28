@@ -1,4 +1,5 @@
 import { env } from "custom-env";
+import { exit } from "process";
 import { Client } from "ts-postgres";
 import { CHATROOM_TABLE_NAME, CHAT_ROOM_MESSAGE_TABLE_NAME, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USERNAME, USER_TABLE_NAME } from  "./app/config/app.config";
 import { PostgresDatabase } from "./app/data/datasources/postgres.database";
@@ -60,6 +61,7 @@ db.setConnection(DB_HOST, Number(DB_PORT), DB_USERNAME, DB_NAME, DB_PASSWORD);
             `);
             console.log("RESPONSE:");
             console.log(JSON.stringify(response));
+            exit(0);
         }catch(e){
             console.log("EXCEPTION:");
             console.log(e);
