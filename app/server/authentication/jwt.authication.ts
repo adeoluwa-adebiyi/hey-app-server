@@ -17,16 +17,12 @@ export class JWTAuthentication implements AuthenticationSpec<express.RequestHand
             try{
 
                 for(let route of exemptedRoutes){
-                    console.log(`ROUTE: ${route}`)
-                    console.log(`ORIGINAL: ${req.originalUrl}`)
-                    console.log(`COMPARE: ${req.originalUrl === route}`);
-
                     if(req.originalUrl.toString() === route.toString()){
                         exempted = true;
                         break;
                     }
                 }
-                console.log(`EXEMPTED: ${exempted}`);
+                
                 if(exempted){
                     next();
                     return;
