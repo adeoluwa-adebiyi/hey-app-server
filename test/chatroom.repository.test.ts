@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import "../app/appregistry.registry";
 import { container } from "tsyringe";
-import { ChatRoomRepositorySpec, UserRepositorySpec } from "../app/data/repositories/repository.interface";
+import { ChatRoomRepositorySpec, UserRepositorySpec } from "../app/domain/repositories/repository.interface";
 import { UserModel } from "../app/domain/entities/user.model";
 import { USER_REGISTRATION_CREDENTIALS } from "./test.data";
 import { DatabaseSpec } from "../app/data/datasources/datasource.interface";

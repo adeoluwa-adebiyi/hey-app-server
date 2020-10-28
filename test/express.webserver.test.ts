@@ -30,7 +30,7 @@ describe("Tests Express webserver listen implementation", async()=>{
     const appServer: RoutableWebServerSpec = container.resolve("RoutableWebServerSpec");
 
 
-    before(()=>{
+    before((done)=>{
 
         const router:Router = Router();
         router.get(route, (req, res)=>{
@@ -38,6 +38,7 @@ describe("Tests Express webserver listen implementation", async()=>{
         })
         appServer.addRoute("/", router);
         appServer.listen(port, address);
+        done();
 
     });
 
@@ -129,8 +130,9 @@ describe("Tests express webserver Authentication", async()=>{
             ...axiosTestOptions
         });
 
-    expect(response.status).to.equal(401);
+        expect(response.status).to.equal(401);
 });
+
 
     after(()=>{
         appServer.close();

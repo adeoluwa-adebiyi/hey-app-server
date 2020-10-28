@@ -1,9 +1,10 @@
-import Axios from "axios"
+import Axios, { AxiosRequestConfig, AxiosResponse } from "axios"
 import { expect } from "chai";
 import { exit } from "process";
 import { container } from "tsyringe";
+import { SECRET } from "../../../app/config/app.config";
 import { DatabaseSpec } from "../../../app/data/datasources/datasource.interface";
-import { UserRepositorySpec } from "../../../app/data/repositories/repository.interface";
+import { UserRepositorySpec } from "../../../app/domain/repositories/repository.interface";
 import { RegisterUserUsecase, UserRegistrationResponse } from "../../../app/domain/usecases/register-user.usecase";
 import { AuthRouter, AUTH_USER_ROUTE_ENDPOINT } from "../../../app/routes/express/auth.route";
 import { RoutableWebServerSpec, WebServerSpec } from "../../../app/server/contracts/webserverspec.interface";
@@ -26,56 +27,66 @@ const USER_TABLE = "bb";
 
 describe("Test Auth: /auth endpoint", ()=>{
 
-    before(async()=>{
+    before((done)=>{
         const authRouter = AuthRouter;
         webServer.addRoute(AUTH_USER_ROUTE_ENDPOINT, authRouter);
-        emptyDB(database).then(async()=>{
-            await seedDB(database);
+        emptyDB(database).then(()=>{
+            seedDB(database).then(()=>{
+                done();
+            })
         });
     })
 
-    it("Should generate valid auth tokens for registered users", async()=>{
+    it("Should generate valid auth tokens for registered users", (done)=>{
         webServer.listen(80, "127.0.0.1");
-        userRepository.deleteUser({email: userLoginCredentials.username}).then(()=>{
+        setTimeout(()=>userRepository.deleteUser({email: userLoginCredentials.username}).then(()=>{
 
-        new RegisterUserUsecase().execute({...userLoginCredentials, email: userLoginCredentials.username}).then(async (userRegResponse: UserRegistrationResponse)=>{
+            new RegisterUserUsecase().execute({...userLoginCredentials, email: userLoginCredentials.username}).then((userRegResponse: UserRegistrationResponse)=>{
 
-            try{
+                    const { email, password } = userCredentials;
+            
+                    Axios(<AxiosRequestConfig>{
+                        method:'post',
+                        url: "http://127.0.0.1"+AUTH_USER_ROUTE_ENDPOINT,
+                        data:{
+                            username: email,
+                            password
+                        },
+                        
+                    }).then((response:AxiosResponse)=>{
 
-                const { email, password } = userCredentials;
-        
-                const response  = await Axios({
-                    method:'post',
-                    url: "http://127.0.0.1"+AUTH_USER_ROUTE_ENDPOINT,
-                    data:{
-                        username: email,
-                        password
-                    }
-                });
+                        const {data} = response.data;
+            
+                        const  authToken = data;
+
+                        if(data)
+                            webServer.close();
+
                 
-                const {data} = response.data;
-        
-                const { authToken } = data;
+                        new JWTTokenAuthAlgorithm(SECRET).verify( authToken.accessToken, (err:any, validatedToken:any)=>{
+                            expect(err).to.equal(null);
+                            console.log("VALIDATED:");
+                            console.log(validatedToken);
+                            expect(validatedToken).to.be.an("object");
 
-                if(data)
-                    webServer.close();
-        
-                new JWTTokenAuthAlgorithm().verify( authToken.accessToken, (err:any, validatedToken:string)=>{
-                    expect(err).to.equal(null);
-                    expect(validatedToken).to.be("string");
-                });
-        
-                new JWTTokenAuthAlgorithm().verify( authToken.refreshToken, (err:any, validatedToken:string)=>{
-                    expect(err).to.equal(null);
-                    expect(validatedToken).to.be("string");
-                });
-        
-            }catch(e){
-                console.log(e);
-            }
-        
+                            new JWTTokenAuthAlgorithm(SECRET).verify( authToken.refreshToken, (err:any, validatedToken:any)=>{
+                                expect(err).to.equal(null);
+                                expect(validatedToken).to.be.an("object");
+                                done();
+                            });
+                        });
+                
+
+
+                    }).catch((e)=>{
+                        console.log(e);
+                        done(e);
+                    })
+            
+            }).catch((e:Error)=>{
+                done(e);
             });
-        });
+        }),1000);
     });
 
 })

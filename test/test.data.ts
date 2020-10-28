@@ -4,6 +4,8 @@ import "../app/appregistry.registry";
 import { container } from "tsyringe";
 import { PasswordHasherSpec } from "../app/common/core/hashers/contract/hasher.interface";
 import { UserLoginCredentials } from "../app/domain/usecases/authenticate-users.usecase";
+import { ChatRoomMessageJSON, ChatRoomMessageType } from "../app/domain/entities/chat-room-message.model";
+import { ChatRoomModelJSON } from "../app/domain/entities/chatroom.model";
 
 export const claims = {
     "sub": "1234567890",
@@ -35,5 +37,15 @@ export const USER_REGISTRATION_CREDENTIALS = {
 export const userLoginCredentials:UserLoginCredentials = {
     username: USER_REGISTRATION_CREDENTIALS.email,
     // username:"wilkinson@mail.com",
-    password: "testuser123"
+    password: USER_REGISTRATION_CREDENTIALS.password
 } 
+
+export const MESSAGE_DATA: ChatRoomMessageJSON = <ChatRoomMessageJSON>{
+    id: 46,
+    sender: 78,
+    message: "Hi there",
+    messageType: ChatRoomMessageType.TEXT,
+    referencedMessage: null,
+    chatRoomId: 766,
+    time: "2020-09-09 09:18-05"
+}

@@ -2,7 +2,7 @@ import { autoInjectable, inject, singleton } from "tsyringe";
 import { AuthTokenModel } from "../entities/auth-tokens.model";
 import { UseCaseSpec } from "./contracts/usecasespec.interface";
 import "reflect-metadata";
-import { UserRepositorySpec } from "../../data/repositories/repository.interface";
+import { UserRepositorySpec } from "../repositories/repository.interface";
 import { JWTTokenAuthAlgorithm } from "../../server/core/jwt-token.token-auth";
 import { InvalidLoginCredentialsException } from "../../common/exceptions/invalid-login-credentials.exception";
 import { PasswordHasherSpec } from "../../common/core/hashers/contract/hasher.interface";

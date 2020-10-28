@@ -1,5 +1,4 @@
 import { UserModel } from "../../../domain/entities/user.model";
-import { ChatRoomRepositorySpec, UserRepositorySpec } from "../repository.interface";
 
 import "reflect-metadata";
 import { autoInjectable, inject } from "tsyringe";
@@ -12,6 +11,7 @@ import { transformToChatModelJSON } from "./transformers";
 import { Pool } from "pg";
 import { response } from "express";
 import { ObjectNotFoundException } from "../../../common/exceptions/object-not-found.exception";
+import { ChatRoomRepositorySpec, UserRepositorySpec } from "../../../domain/repositories/repository.interface";
 
 const CHAT_ROOM_TABLE = "chatroom";
 const USER_TABLE = USER_TABLE_NAME;

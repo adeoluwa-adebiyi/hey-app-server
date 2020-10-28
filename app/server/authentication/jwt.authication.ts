@@ -2,7 +2,8 @@ import { AuthenticationSpec } from "../contracts/authenticationspec.interface";
 import express from "express";
 import { inject, injectable } from "tsyringe";
 import { TokenAuthSpec } from "../contracts/tokenauthspec.interface";
-import { UserRepositorySpec } from "../../data/repositories/repository.interface";
+import { UserRepositorySpec } from "../../domain/repositories/repository.interface";
+import { nextTick } from "process";
 
 @injectable()
 export class JWTAuthentication implements AuthenticationSpec<express.RequestHandler>{
@@ -10,18 +11,18 @@ export class JWTAuthentication implements AuthenticationSpec<express.RequestHand
     constructor(@inject("TokenAuthSpec") private tokenAuthentication?: TokenAuthSpec, @inject("UserRepositorySpec") private userRepository?: UserRepositorySpec){}
 
     provideAuthentication(exemptedRoutes:Array<string>): express.RequestHandler{
-        let exempted = false;
+        
         const requestHandler: express.RequestHandler = (req, res, next)=>{
+            let exempted = false;
             try{
 
                 for(let route of exemptedRoutes){
-                    if(req.originalUrl === route){
-                        console.log("EQUAL: "+true);
+                    if(req.originalUrl.toString() === route.toString()){
                         exempted = true;
                         break;
                     }
                 }
-
+                
                 if(exempted){
                     next();
                     return;

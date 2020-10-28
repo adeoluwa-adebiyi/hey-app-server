@@ -7,7 +7,7 @@ import { JWTTokenAuthAlgorithm } from "../app/server/core/jwt-token.token-auth";
 import { PasswordHasherSpec } from "../app/common/core/hashers/contract/hasher.interface";
 import { container } from "tsyringe";
 import { expect } from "chai";
-import { UserRepositorySpec } from "../app/data/repositories/repository.interface";
+import { UserRepositorySpec } from "../app/domain/repositories/repository.interface";
 import { DatabaseSpec } from "../app/data/datasources/datasource.interface";
 import { RegisterUserUsecase, UserRegistrationResponse } from "../app/domain/usecases/register-user.usecase";
 import { userLoginCredentials } from "./test.data";

@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { autoInjectable, inject, singleton } from "tsyringe";
 import { Serializable } from "../../common/core/contracts/serializable.interface";
 import { PasswordHasherSpec } from "../../common/core/hashers/contract/hasher.interface";
-import { UserRepositorySpec } from "../../data/repositories/repository.interface";
+import { UserRepositorySpec } from "../repositories/repository.interface";
 import { UserModel } from "../entities/user.model";
 import { UseCaseSpec } from "./contracts/usecasespec.interface";
 import { InvalidArgumentsException } from "../../common/exceptions/invalid-arguments.exception";
