@@ -46,6 +46,6 @@ export const MESSAGE_DATA: ChatRoomMessageJSON = <ChatRoomMessageJSON>{
     message: "Hi there",
     messageType: ChatRoomMessageType.TEXT,
     referencedMessage: null,
-    chatRoomId: 766,
+    chatRoomId: "766",
     time: "2020-09-09 09:18-05"
 }

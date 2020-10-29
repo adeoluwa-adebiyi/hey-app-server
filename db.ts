@@ -43,8 +43,7 @@ db.setConnection(DB_HOST, Number(DB_PORT), DB_USERNAME, DB_NAME, DB_PASSWORD);
 
                 CREATE TABLE IF NOT EXISTS ${CHAT_ROOM_MESSAGE_TABLE_NAME}(
                     id SERIAL PRIMARY KEY,
-                    chatroom_id INTEGER,
-                    FOREIGN KEY (chatroom_id) REFERENCES ${CHATROOM_TABLE_NAME}(id) ON DELETE CASCADE ON UPDATE CASCADE,
+                    chatroom_id VARCHAR(100),
                     message TEXT,
                     sender_id INTEGER,
                     FOREIGN KEY (sender_id) REFERENCES ${USER_TABLE_NAME}(id) ON DELETE CASCADE ON UPDATE CASCADE,
