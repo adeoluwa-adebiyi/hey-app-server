@@ -17,7 +17,7 @@ export interface ChatRoomMessageJSON{
     sender: number;
     messageType: ChatRoomMessageType,
     referencedMessage?: number,
-    chatRoomId: number,
+    chatRoomId: string,
     time: string;
 }
 
@@ -29,10 +29,10 @@ export class ChatRoomMessageModel implements Serializable<ChatRoomMessageModel>{
     sender: number;
     messageType: ChatRoomMessageType;
     referencedMessage: number;
-    chatRoomId: number;
+    chatRoomId: string;
     time: string;
 
-    constructor(id:number=null, message:string=null, sender:number=null, messageType:ChatRoomMessageType=null,referencedMessage: number=null, chatRoomId:number=null, time:string=null){
+    constructor(id:number=null, message:string=null, sender:number=null, messageType:ChatRoomMessageType=null,referencedMessage: number=null, chatRoomId:string=null, time:string=null){
         this.id = id;
         this.message = message;
         this.sender = sender;

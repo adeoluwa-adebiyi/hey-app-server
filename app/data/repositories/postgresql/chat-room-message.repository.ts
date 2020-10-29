@@ -22,12 +22,12 @@ const GET_CHATROOM_MESSAGES_QUERY = `SELECT *,created::timestamptz FROM ${CHAT_R
 
 const GET_CHATROOM_MESSAGE_BY_ID_QUERY = `SELECT *,created::timestamptz FROM ${CHAT_ROOM_MESSAGE_TABLE_NAME} WHERE id = $1`;
 
-const POST_CHATROOM_MESSAGES_QUERY = `INSERT into ${CHAT_ROOM_MESSAGE_TABLE_NAME}(sender_id, message, message_type, chatroom_id, referenced_message, created) 
+const POST_CHATROOM_MESSAGE_QUERY = `INSERT into ${CHAT_ROOM_MESSAGE_TABLE_NAME}(sender_id, message, message_type, chatroom_id, referenced_message, created) 
 VALUES(
     ( SELECT id FROM ${USER_TABLE_NAME} WHERE id = $1 ), 
     $2, 
     $3, 
-    ( SELECT id FROM ${CHATROOM_TABLE_NAME} WHERE id = $4 ), 
+    ( SELECT room_key FROM ${CHATROOM_TABLE_NAME} WHERE room_key = $4 ), 
     $5,
     $6
 ) RETURNING *` ;
@@ -43,8 +43,8 @@ export class ChatRoomMessageRepository implements ChatRoomMessageRepositorySpec{
 
     constructor(@inject("DatabaseSpec") private database: DatabaseSpec){}
 
-    async getChatRoomMessages(id: number, limit: number): Promise<ChatRoomMessageModel[]> {
-        const response =  await (this.getDatabaseConnector()).query(GET_CHATROOM_MESSAGES_QUERY, [id, limit]);
+    async getChatRoomMessages(roomKey: string, limit: number=50): Promise<ChatRoomMessageModel[]> {
+        const response =  await (this.getDatabaseConnector()).query(GET_CHATROOM_MESSAGES_QUERY, [roomKey, limit]);
         return response.map((json:any)=>new ChatRoomMessageModel().fromJSON(transfromToChatRoomMessageModelJSON(json)));
     }
 
@@ -60,7 +60,7 @@ export class ChatRoomMessageRepository implements ChatRoomMessageRepositorySpec{
     }
 
     async postMessage(message: ChatRoomMessageModel): Promise<ChatRoomMessageModel> {
-        const response =  await (this.getDatabaseConnector()).query(POST_CHATROOM_MESSAGES_QUERY, [
+        const response =  await (this.getDatabaseConnector()).query(POST_CHATROOM_MESSAGE_QUERY, [
             message.sender, 
             message.message, 
             message.messageType, 

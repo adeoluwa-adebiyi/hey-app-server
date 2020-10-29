@@ -39,7 +39,7 @@ describe("Tests ChatRoomMessageRepository functionality", ()=>{
             userRepo.createUser({...USER_REGISTRATION_CREDENTIALS}).then((user:UserModel)=>{
                 chatRoomRepo.createChatRoom([new UserModel().fromJSON({...USER_REGISTRATION_CREDENTIALS, id:user.id})]).then((chatRoom: ChatRoomModel[])=>{
                     chatRoomMessageRepo.postMessage(new ChatRoomMessageModel()
-                        .fromJSON({...MESSAGE_DATA, chatRoomId:chatRoom[0].id, sender: chatRoom[0].userId}))
+                        .fromJSON({...MESSAGE_DATA, chatRoomId:chatRoom[0].roomKey, sender: chatRoom[0].userId}))
                         .then((chatRoomMessage:ChatRoomMessageModel)=>{
                             const obj:ChatRoomMessageModel = chatRoomMessage;
                             expect(obj.id).to.be.a("number");
@@ -47,7 +47,7 @@ describe("Tests ChatRoomMessageRepository functionality", ()=>{
                             expect(obj.sender).to.equal(chatRoom[0].userId);
                             expect(obj.messageType).to.equal(messageType);
                             expect(obj.referencedMessage).to.equal(referencedMessage);
-                            expect(obj.chatRoomId).to.equal(chatRoom[0].id);
+                            expect(obj.chatRoomId).to.equal(chatRoom[0].roomKey);
                             expect(new Date(obj.time).toLocaleDateString()).to.equal(new Date(time).toLocaleDateString());
                             done();
                         }).catch((e:Error)=>{
@@ -73,9 +73,9 @@ describe("Tests ChatRoomMessageRepository functionality", ()=>{
 
                     chatRoomRepo.createChatRoom([new UserModel().fromJSON({...USER_REGISTRATION_CREDENTIALS, id:user.id})]).then((chatRoom: ChatRoomModel[])=>{
 
-                        chatRoomMessageRepo.postMessage(new ChatRoomMessageModel().fromJSON({...MESSAGE_DATA, chatRoomId:chatRoom[0].id, sender:chatRoom[0].userId})).then((chatRoomMessageRes:ChatRoomMessageModel)=>{
+                        chatRoomMessageRepo.postMessage(new ChatRoomMessageModel().fromJSON({...MESSAGE_DATA, chatRoomId:chatRoom[0].roomKey, sender:chatRoom[0].userId})).then((chatRoomMessageRes:ChatRoomMessageModel)=>{
 
-                            chatRoomMessageRepo.getChatRoomMessages(chatRoom[0].id,50)
+                            chatRoomMessageRepo.getChatRoomMessages(chatRoom[0].roomKey,50)
                             .then((chatRoomMessages:ChatRoomMessageModel[])=>{
                                 const obj:ChatRoomMessageModel = chatRoomMessages[0];
                                 console.log(obj);
@@ -84,7 +84,7 @@ describe("Tests ChatRoomMessageRepository functionality", ()=>{
                                 expect(obj.sender).to.equal(chatRoom[0].userId);
                                 expect(obj.messageType).to.equal(messageType);
                                 expect(obj.referencedMessage).to.equal(referencedMessage);
-                                expect(obj.chatRoomId).to.equal(chatRoom[0].id);
+                                expect(obj.chatRoomId).to.equal(chatRoom[0].roomKey);
                                 expect(new Date(obj.time).toLocaleDateString()).to.equal(new Date(time).toLocaleDateString());
                                 done();
                             }).catch((e:Error)=>{
@@ -115,8 +115,8 @@ describe("Tests ChatRoomMessageRepository functionality", ()=>{
                 chatRoomRepo.createChatRoom([new UserModel().fromJSON({...USER_REGISTRATION_CREDENTIALS, id:user.id})]).then((chatRoom: ChatRoomModel[])=>{
 
                     Promise.all([
-                        chatRoomMessageRepo.postMessage(new ChatRoomMessageModel().fromJSON({...MESSAGE_DATA, chatRoomId:chatRoom[0].id, sender:chatRoom[0].userId})),
-                        chatRoomMessageRepo.postMessage(new ChatRoomMessageModel().fromJSON({...MESSAGE_DATA, chatRoomId:chatRoom[0].id, sender:chatRoom[0].userId})),
+                        chatRoomMessageRepo.postMessage(new ChatRoomMessageModel().fromJSON({...MESSAGE_DATA, chatRoomId:chatRoom[0].roomKey, sender:chatRoom[0].userId})),
+                        chatRoomMessageRepo.postMessage(new ChatRoomMessageModel().fromJSON({...MESSAGE_DATA, chatRoomId:chatRoom[0].roomKey, sender:chatRoom[0].userId})),
                     ]).then((chatRoomMessages:ChatRoomMessageModel[])=>{
                         const first = chatRoomMessages[0];
                         chatRoomMessageRepo.deleteChatRoomMessage(first.id)
