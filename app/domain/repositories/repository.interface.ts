@@ -35,7 +35,7 @@ export interface ChatRoomRepositorySpec extends BaseRepository{
 
 export interface ChatRoomMessageRepositorySpec extends BaseRepository{
 
-    getChatRoomMessages(id:number, limit:number): Promise<Array<ChatRoomMessageModel>>;
+    getChatRoomMessages(roomKey:string, limit:number): Promise<Array<ChatRoomMessageModel>>;
 
     deleteChatRoomMessage(id:number): Promise<any>;
 
