@@ -13,14 +13,15 @@ import { response } from "express";
 import { ObjectNotFoundException } from "../../../common/exceptions/object-not-found.exception";
 import { ChatRoomRepositorySpec, UserRepositorySpec } from "../../../domain/repositories/repository.interface";
 
+
 const CHAT_ROOM_TABLE = "chatroom";
 const USER_TABLE = USER_TABLE_NAME;
 const CREATE_CHATROOM_QUERY = "INSERT into chatroom(room_key, user_id)  VALUES( ${roomKey}, ( SELECT id FROM bb where email = ${email} )  ) RETURNING *";
 const GET_USER_CHAT_ROOMS_QUERY = "SELECT * FROM chatroom WHERE user_id = $1";
 const DELETE_USER_CHAT_ROOM_BY_ID = "DELETE FROM chatroom WHERE id = $1";
 const GET_USER_CHAT_ROOMS_QUERY_BY_ID = "SELECT * FROM chatroom WHERE id = $1";
-
-// const CREATE_CHATROOM_QUERY = `SELECT * FROM chatroom`;
+const DELETE_CHATROOM_BY_ROOMKEY_QUERY = `DELETE FROM ${CHATROOM_TABLE_NAME} WHERE room_key = $1`;
+const GET_USER_CHAT_ROOMS_QUERY_BY_ROOMKEY =`SELECT * FROM ${CHATROOM_TABLE_NAME} WHERE room_key = $1`;
 
 
 @autoInjectable()
@@ -29,6 +30,18 @@ export class ChatRoomRepository implements ChatRoomRepositorySpec{
     constructor(
         @inject("DatabaseSpec") private database?: DatabaseSpec, 
         @inject("UserRepositorySpec") private userRepo?: UserRepositorySpec){}
+
+
+    async getUserChatRoomsByRoomKey(roomKey: string): Promise<ChatRoomModel[]> {
+        try{
+            const response = await (this.getDatabaseConnector()).query(GET_USER_CHAT_ROOMS_QUERY_BY_ROOMKEY, [roomKey]);
+            if(!response || response.length === 0)
+                throw new ObjectNotFoundException("No chatrooms found for roomKey: "+roomKey);
+            return response.map((json:any)=> new ChatRoomModel().fromJSON(transformToChatModelJSON(json)));
+        }catch(e:any){
+            throw e;
+        };
+    }
 
     async getChatRoom(chatRoomId: number): Promise<ChatRoomModel> {
         const response = await (this.getDatabaseConnector()).query(GET_USER_CHAT_ROOMS_QUERY_BY_ID, [chatRoomId]);
@@ -68,6 +81,10 @@ export class ChatRoomRepository implements ChatRoomRepositorySpec{
         }catch(e){
             throw new ObjectNotFoundException(`ChatRoomModel with id: ${chatRoomId} not found`);
         }
+    }
+
+    async deleteChatRoomByRoomKey(roomKey: string): Promise<void>{
+        return await (this.getDatabaseConnector()).query(DELETE_CHATROOM_BY_ROOMKEY_QUERY, [roomKey]);
     }
 
     getDatabaseConnector() {

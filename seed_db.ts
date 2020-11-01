@@ -6,15 +6,17 @@ import { CHATROOM_TABLE_NAME, CHAT_ROOM_MESSAGE_TABLE_NAME, DB_HOST, DB_NAME, DB
 import { exit } from "process";
 import { DatabaseSpec } from "./app/data/datasources/datasource.interface";
 import { container } from "tsyringe";
+import { TokenAuthSpec } from "./app/server/contracts/tokenauthspec.interface";
+import { PasswordHasherSpec } from "./app/common/core/hashers/contract/hasher.interface";
 
 
-// env("dev");
-
-const _USER_TABLE_NAME = USER_TABLE_NAME
-const _CHAT_ROOM_TABLE_NAME = "chatroom"
+const _USER_TABLE_NAME = USER_TABLE_NAME;
+const _CHAT_ROOM_TABLE_NAME = "chatroom";
 const _CHAT_ROOM_MESSAGE_TABLE_NAME = CHAT_ROOM_MESSAGE_TABLE_NAME;
 
 const database: DatabaseSpec = container.resolve("DatabaseSpec");
+
+const passwordHashAlg: PasswordHasherSpec = container.resolve("PasswordHasherSpec");
 
 
 export const seedDB = (async(db: DatabaseSpec) : Promise<any>=>{
@@ -32,35 +34,20 @@ export const seedDB = (async(db: DatabaseSpec) : Promise<any>=>{
                 console.log("Fixture export failed")
             }else{
                 const json = JSON.parse(data.toString());
-                // await db.getConnector().query("begin;")
                 for(let data of json["users"]){
-    
-                    const { firstname, lastname, dob, email, passwordHash="djdjjd" } = data;
+                    const { firstname, lastname, dob, email, passwordHash=await passwordHashAlg.hashPassword(data.password) } = data;
                     const values = [firstname,lastname,dob,email,passwordHash];
                     await db.getConnector().query(`INSERT into ${_USER_TABLE_NAME}(firstname, lastname, dob, email, passwordhash) VALUES( $1, $2, $3, $4, $5 )`, values)
 
                 }
-                // db.getConnector().query("commit;").then(async (onfulfilled:any)=>{
-                //     exit(0);
-                // })
             }
         });
-    })
-
-    
-
-    
+    });
 
 });
 
 
 export const emptyDB = async(db: DatabaseSpec): Promise<any> =>{
-
-    // return db.connect().then((connMsg:any)=>{
-    //     return Promise.all([db.getConnector().query(`DELETE FROM ${CHATROOM_TABLE_NAME}`)]).then((responses=>{
-    //         return db.getConnector().query(`DELETE FROM ${_USER_TABLE_NAME}`)
-    //     }))
-    // });
 
     return db.connect().then((connMsg:any)=>{
         return Promise.all([
@@ -68,11 +55,7 @@ export const emptyDB = async(db: DatabaseSpec): Promise<any> =>{
             db.getConnector().query(`DELETE FROM ${CHATROOM_TABLE_NAME}`),
             db.getConnector().query(`DELETE FROM ${_USER_TABLE_NAME}`)
 
-        ])
+        ]);
     });
     
 }
-
-// (()=>{
-//     seedDB(database);
-// })();

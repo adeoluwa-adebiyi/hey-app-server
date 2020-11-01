@@ -31,7 +31,8 @@ export const USER_REGISTRATION_CREDENTIALS = {
     dob: "5-06-1968",
     email:"gi.jones@yahoo.com",
     password: userPassword,
-    passwordHash: passwordHasher.hashPassword(userPassword)
+    passwordHash: passwordHasher.hashPassword(userPassword),
+    pic:"user-test-pic-aeb677d3d7"
 };
 
 export const userLoginCredentials:UserLoginCredentials = {
