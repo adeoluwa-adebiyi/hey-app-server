@@ -25,8 +25,7 @@ const CREATE_NEW_USER_QUERY = `INSERT into "${USER_TABLE}"(firstname, lastname, 
 @injectable()
 export class PgSQLUserRepository implements UserRepositorySpec{
 
-    constructor(@inject("DatabaseSpec")private database?: DatabaseSpec){
-    }
+    constructor(@inject("DatabaseSpec")private database?: DatabaseSpec){}
 
 
     async deleteUser(userCredentials: UserAuthId): Promise<any> {
