@@ -65,8 +65,6 @@ describe("Test Auth: /auth endpoint", ()=>{
                 
                         new JWTTokenAuthAlgorithm(SECRET).verify( authToken.accessToken, (err:any, validatedToken:any)=>{
                             expect(err).to.equal(null);
-                            console.log("VALIDATED:");
-                            console.log(validatedToken);
                             expect(validatedToken).to.be.an("object");
 
                             new JWTTokenAuthAlgorithm(SECRET).verify( authToken.refreshToken, (err:any, validatedToken:any)=>{

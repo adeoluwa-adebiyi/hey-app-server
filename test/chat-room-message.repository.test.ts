@@ -51,7 +51,6 @@ describe("Tests ChatRoomMessageRepository functionality", ()=>{
                             expect(new Date(obj.time).toLocaleDateString()).to.equal(new Date(time).toLocaleDateString());
                             done();
                         }).catch((e:Error)=>{
-                            console.log(e);
                             done(e);
                         });
                     }).catch((e:Error)=>{
@@ -78,7 +77,6 @@ describe("Tests ChatRoomMessageRepository functionality", ()=>{
                             chatRoomMessageRepo.getChatRoomMessages(chatRoom[0].roomKey,50)
                             .then((chatRoomMessages:ChatRoomMessageModel[])=>{
                                 const obj:ChatRoomMessageModel = chatRoomMessages[0];
-                                console.log(obj);
                                 expect(obj.id).to.be.a("number");
                                 expect(obj.message).to.equal(message);
                                 expect(obj.sender).to.equal(chatRoom[0].userId);
@@ -121,7 +119,6 @@ describe("Tests ChatRoomMessageRepository functionality", ()=>{
                         const first = chatRoomMessages[0];
                         chatRoomMessageRepo.deleteChatRoomMessage(first.id)
                         .then((queryRes: any)=>{
-                            console.log(`QUERY_RES: ${queryRes}`);
                             chatRoomMessageRepo.getChatRoomMessage(first.id).then((messages:ChatRoomMessageModel)=>{
                                 expect(messages).to.be.an("error");
                                 done(Error("Test failed. Expected Error"));

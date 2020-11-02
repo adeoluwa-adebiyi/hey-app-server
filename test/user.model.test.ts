@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { describe } from "mocha";
 import { UserModel } from "../app/domain/entities/user.model";
+import { USER_REGISTRATION_CREDENTIALS } from "./test.data";
 
 describe("Tests User model serialization property",()=>{
 
@@ -8,6 +9,7 @@ describe("Tests User model serialization property",()=>{
         id:1,
         firstname: "Austin",
         lastname:"Powell",
+        ...USER_REGISTRATION_CREDENTIALS,
         dob: new Date(Date.now()).toLocaleDateString().replace("/","-").replace("/","-")
     };
 

@@ -30,12 +30,16 @@ export interface ChatRoomRepositorySpec extends BaseRepository{
 
     deleteChatRoom(chatRoomId: number): Promise<void>;
 
+    deleteChatRoomByRoomKey(roomKey: string): Promise<void>;
+
+    getUserChatRoomsByRoomKey(roomKey: string): Promise<Array<ChatRoomModel>>;
+
 }
 
 
 export interface ChatRoomMessageRepositorySpec extends BaseRepository{
 
-    getChatRoomMessages(roomKey:string, limit:number): Promise<Array<ChatRoomMessageModel>>;
+    getChatRoomMessages(roomKey:string, limit?:number, offset?:number): Promise<Array<ChatRoomMessageModel>>;
 
     deleteChatRoomMessage(id:number): Promise<any>;
 

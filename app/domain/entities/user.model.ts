@@ -20,6 +20,8 @@ export interface UserJSON{
     dob?: string;
 
     email: string;
+
+    pic: string;
 }
 
 export class UserModel implements Serializable<UserModel>{
@@ -36,13 +38,16 @@ export class UserModel implements Serializable<UserModel>{
 
      passwordHash: string;
 
-    constructor(id:number=null, firstname: string=null, lastname: string=null, dob: Date=null, email: string=null, passwordHash:string = null){
+     pic: string;
+
+    constructor(id:number=null, firstname: string=null, lastname: string=null, dob: Date=null, email: string=null, passwordHash:string = null, pic:string=null){
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.dob = dob;
         this.email = email;
         this.passwordHash = passwordHash;
+        this.pic = pic;
     }
 
     toJSON(): UserJSON {
@@ -51,7 +56,8 @@ export class UserModel implements Serializable<UserModel>{
             firstname: this.firstname,
             lastname: this.lastname,
             dob: this.dob.toLocaleDateString(),
-            email: this.email
+            email: this.email,
+            pic: this.pic
         } 
     }
 
@@ -62,11 +68,12 @@ export class UserModel implements Serializable<UserModel>{
             lastname: this.lastname,
             dob: this.dob.toLocaleDateString(),
             email: this.email,
-            passwordHash: this.passwordHash
+            passwordHash: this.passwordHash,
+            pic: this.pic
         } 
     }
     
     fromJSON(json: any): UserModel {
-        return new UserModel(json.id, json.firstname, json.lastname, new Date(json.dob), json.email, json.passwordhash?json.passwordhash:null);
+        return new UserModel(json.id, json.firstname, json.lastname, new Date(json.dob), json.email, json.passwordhash?json.passwordhash:null,json.pic?json.pic:null);
     }
 }
