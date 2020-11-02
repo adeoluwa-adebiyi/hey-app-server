@@ -13,6 +13,11 @@ const jwtAuthService: TokenAuthSpec = container.resolve("TokenAuthSpec");
 const router:Router = Router();
 
 
+router.get("/", (req: Request, res: Response)=>{
+    res.send("Hello World");
+})
+
+
 router.post(REGISTER_USER_ENDPOINT, async(req: Request, res: Response)=>{
     try{
         const params = req.body;

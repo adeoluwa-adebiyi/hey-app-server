@@ -1,5 +1,18 @@
 import { ChatRoomMessageJSON } from "../../../domain/entities/chat-room-message.model";
 import { ChatRoomModelJSON } from "../../../domain/entities/chatroom.model";
+import { UserWithAuthCredJSON } from "../../../domain/entities/user.model";
+
+export const transformDbResultToObject = (resultArray: Array<any>): UserWithAuthCredJSON =>{
+    return {
+        id: resultArray[0],
+        firstname: resultArray[1],
+        lastname: resultArray[2],
+        email: resultArray[3],
+        dob: resultArray[4],
+        passwordHash: resultArray[5],
+        pic: resultArray[6]
+    }
+}
 
 export const  transformToChatModelJSON = (json: any): ChatRoomModelJSON  => {
     return {

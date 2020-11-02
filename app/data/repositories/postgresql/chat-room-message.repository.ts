@@ -18,7 +18,7 @@ import { ObjectNotFoundException } from "../../../common/exceptions/object-not-f
 // chatRoomId
 
 
-const GET_CHATROOM_MESSAGES_QUERY = `SELECT *,created::timestamptz FROM ${CHAT_ROOM_MESSAGE_TABLE_NAME} WHERE chatroom_id = $1 LIMIT $2`;
+const GET_CHATROOM_MESSAGES_QUERY = `SELECT *,created::timestamptz FROM ${CHAT_ROOM_MESSAGE_TABLE_NAME} WHERE chatroom_id = $1 ORDER BY created DESC LIMIT $2 OFFSET $3`;
 
 const GET_CHATROOM_MESSAGE_BY_ID_QUERY = `SELECT *,created::timestamptz FROM ${CHAT_ROOM_MESSAGE_TABLE_NAME} WHERE id = $1`;
 
@@ -27,7 +27,7 @@ VALUES(
     ( SELECT id FROM ${USER_TABLE_NAME} WHERE id = $1 ), 
     $2, 
     $3, 
-    ( SELECT room_key FROM ${CHATROOM_TABLE_NAME} WHERE room_key = $4 ), 
+    ( SELECT DISTINCT(room_key) FROM ${CHATROOM_TABLE_NAME} WHERE room_key = $4 ), 
     $5,
     $6
 ) RETURNING *` ;
@@ -43,8 +43,8 @@ export class ChatRoomMessageRepository implements ChatRoomMessageRepositorySpec{
 
     constructor(@inject("DatabaseSpec") private database: DatabaseSpec){}
 
-    async getChatRoomMessages(roomKey: string, limit: number=50): Promise<ChatRoomMessageModel[]> {
-        const response =  await (this.getDatabaseConnector()).query(GET_CHATROOM_MESSAGES_QUERY, [roomKey, limit]);
+    async getChatRoomMessages(roomKey: string, limit: number=50, offset:number = 0): Promise<ChatRoomMessageModel[]> {
+        const response =  await (this.getDatabaseConnector()).query(GET_CHATROOM_MESSAGES_QUERY, [roomKey, limit, offset]);
         return response.map((json:any)=>new ChatRoomMessageModel().fromJSON(transfromToChatRoomMessageModelJSON(json)));
     }
 

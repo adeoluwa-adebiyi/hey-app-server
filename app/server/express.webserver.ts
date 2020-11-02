@@ -56,4 +56,8 @@ export class ExpressWebServer implements AuthenticatedWebServerSpec<RequestHandl
         return this;
     }
 
+    get application():Express{
+        return this.app;
+    }
+
 }

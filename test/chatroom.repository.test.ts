@@ -54,7 +54,7 @@ describe("Tests ChatRoomRepository", ()=>{
             }).catch(e=>done(e));
         }).catch(e=>done(e)), 1000);
         
-    })
+    });
 
 
     it("Should create valid chatrooms for users", (done)=>{
@@ -114,6 +114,46 @@ describe("Tests ChatRoomRepository", ()=>{
                         expect(chatRoom.id).to.be.a("number");
                         expect(chatRoom.roomKey).to.be.a("string");
                         expect(chatRoom.userId).to.equal(user.id);
+                        done();
+                    }).catch((e: BaseException)=>{
+                        done(e);
+                    })
+                }).catch((e:any)=>{done(e)});
+            })
+            .catch((e:any)=>done(e));
+        },1000);
+    });
+
+    it("Should delete user chatrooms by roomKey", (done)=>{
+
+        setTimeout(()=>{
+            userRepository.createUser({...userRegistrationCredentials})
+            .then((user:UserModel)=>{
+                chatRoomRepo.createChatRoom([user]).then((chatRooms:ChatRoomModel[])=>{
+                    chatRoomRepo.deleteChatRoomByRoomKey(chatRooms[0].roomKey).then((res:any)=>{
+                        
+                        done();
+
+                    }).catch((e:any)=>done(e));
+                }).catch((e:any)=>{done(e)});
+            })
+            .catch((e:any)=>done(e));
+        },1000);
+        
+    });
+
+    it("Should retrieve user chatrooms by roomKey", (done)=>{
+        setTimeout(()=>{
+            Promise.all([...users.slice(0,2).map((_user: UserModel)=> userRepository.getUserById({email: _user.email}))])
+            .then((_users:UserModel[])=>{
+                chatRoomRepo.createChatRoom(_users).then((chatRooms:ChatRoomModel[])=>{
+                    chatRoomRepo.getUserChatRoomsByRoomKey(chatRooms[0].roomKey).then((chatRooms: ChatRoomModel[])=>{
+                        expect(chatRooms[0].id).to.be.a("number");
+                        expect(chatRooms[0].roomKey).to.be.a("string");
+                        expect(chatRooms[1].id).to.be.a("number");
+                        expect(chatRooms[1].roomKey).to.be.a("string");
+                        expect(chatRooms.map((room)=>room.userId)).to.include(_users[0].id);
+                        expect(chatRooms.map((room)=>room.userId)).to.include(_users[1].id);
                         done();
                     }).catch((e: BaseException)=>{
                         done(e);

@@ -53,6 +53,9 @@ db.setConnection(DB_HOST, Number(DB_PORT), DB_USERNAME, DB_NAME, DB_PASSWORD);
     
                 ALTER TABLE ${CHATROOM_TABLE_NAME}
                 ADD COLUMN IF NOT EXISTS created TIMESTAMP NOT NULL DEFAULT NOW();
+                
+                ALTER TABLE ${USER_TABLE_NAME}
+                ADD COLUMN IF NOT EXISTS pic TEXT;
 
 
                 ALTER TABLE ${CHAT_ROOM_MESSAGE_TABLE_NAME}
