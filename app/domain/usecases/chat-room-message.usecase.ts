@@ -2,7 +2,7 @@ import { autoInjectable, inject, singleton } from "tsyringe";
 import { ChatRoomMessageJSON, ChatRoomMessageModel, ChatRoomMessageType } from "../entities/chat-room-message.model";
 import { ChatRoomMessageRepositorySpec, ChatRoomRepositorySpec, UserRepositorySpec } from "../repositories/repository.interface";
 import { UseCaseSpec } from "./contracts/usecasespec.interface";
-import { ChatRoomResponseJSON, GetChatRoomByRoomKeyUseCase } from "./create-chatroom.usecase";
+import { ChatRoomResponseJSON, GetChatRoomByUserIdUseCase } from "./create-chatroom.usecase";
 
 
 export interface PostChatRoomMessageParams{
@@ -72,7 +72,7 @@ export class GetAllChatRoomMessagesUsecase implements UseCaseSpec<Promise<GetAll
         const chatRoomMEssages: ChatRoomMessageModel[] = await this.chatRoomMessageRepo.getChatRoomMessages(chatRoomId, 50, computedOffset);
         return <GetAllChatRoomMessagesUsecaseResponse>{
            chatRoomMessagesData:{
-               chatRoom: (await new GetChatRoomByRoomKeyUseCase().execute({roomKey:chatRoomId})).chatRoom,
+               chatRoom: (await new GetChatRoomByUserIdUseCase().execute({roomKey:chatRoomId})).chatRoom,
                messages: chatRoomMEssages.map((chatRoomMessage:ChatRoomMessageModel)=>chatRoomMessage.toJSON())
            }
         }

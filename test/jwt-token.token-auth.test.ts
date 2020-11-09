@@ -31,4 +31,11 @@ describe("Tests JWT Token Auth algorithm",()=>{
             done();
         })
     });
+
+    it("Should correctly decode tokens", async()=>{
+
+        let data = (await tokenAuthAlgorithm.decodeToken(tokenAuthAlgorithm.generateToken(claims))).body
+        data = {sub:data.sub, name: data.name, iat: data.iat};
+        expect(JSON.stringify(data)).to.equal(JSON.stringify(claims));
+    });
 })

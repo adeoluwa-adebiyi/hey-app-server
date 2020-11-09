@@ -1,4 +1,5 @@
 import { Serializable } from "../../common/core/contracts/serializable.interface";
+import { UserJSON } from "./user.model";
 
 export interface ChatRoomModelProps{
     id?: number;
@@ -7,6 +8,10 @@ export interface ChatRoomModelProps{
 }
 
 export interface ChatRoomModelJSON extends ChatRoomModelProps{}
+
+export interface ChatRoomModelWithUserJSON extends ChatRoomModelProps{
+    user: UserJSON;
+}
 
 export class ChatRoomModel implements ChatRoomModelProps ,Serializable<ChatRoomModelJSON>{
     id?: number;
