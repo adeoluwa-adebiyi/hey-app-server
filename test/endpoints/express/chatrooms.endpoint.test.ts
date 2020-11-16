@@ -16,6 +16,8 @@ import { ChatRoomModel } from "../../../app/domain/entities/chatroom.model";
 import { expect } from "chai";
 import { GetChatRoomByUserIdUseCase } from "../../../app/domain/usecases/create-chatroom.usecase";
 import { GetUserChatRoomsUsecase, GetUserChatRoomsUsecaseResponse } from "../../../app/domain/usecases/get-user-chatrooms.usecase";
+import { ChatRoomRouter } from "../../../app/routes/express/chatroom.route";
+import { ChatRoomsRouter } from "../../../app/routes/express/chatrooms.route";
 
 
 const userCredentials = USER_REGISTRATION_CREDENTIALS;
@@ -31,9 +33,6 @@ const chatRoomRepo: ChatRoomRepositorySpec = container.resolve("ChatRoomReposito
 
 const database: DatabaseSpec = container.resolve("DatabaseSpec");
 
-let userJWT: string; 
-
-const address:string = "http://127.0.0.1";
 
 const CHAT_ROOM_ENDPOINTS = {
     list: ()=>"/chatrooms",
@@ -41,13 +40,14 @@ const CHAT_ROOM_ENDPOINTS = {
 
 let users: UserModel[] = null;
 
-
 const tokenAuthAlgorithm:TokenAuthSpec = container.resolve("TokenAuthSpec");
 
 let CLAIMS:any = claims;
 
 const authHeaders= (sub:number) => {
+
     CLAIMS["sub"] = sub;
+    const AUTH_HEADER = CLAIMS;
 
     return {
         headers: {
@@ -61,6 +61,7 @@ const authHeaders= (sub:number) => {
 describe("Test ChatRooms endpoint for functionality", ()=>{
 
     beforeEach((done)=>{
+        webServer.addRoute(CHAT_ROOM_ENDPOINTS.list(),ChatRoomsRouter);
         // webServer.listen(80, address.replace("http://",""));
         users = JSON.parse(fs.readFileSync(path.resolve("./app/data/fixtures/users.fixture.json")).toString()).users.map((user:any)=>new UserModel().fromJSON(user));
         emptyDB(database).then(()=>{
@@ -73,6 +74,7 @@ describe("Test ChatRooms endpoint for functionality", ()=>{
     it("/chatrooms endpoint should return GetUserChatRoomData",(done)=>{
 
         setTimeout(()=>{
+
             Promise.all([...users.slice(0,2).map((_user: UserModel)=> userRepository.getUserById({email: _user.email}))])
                 .then((_users:UserModel[])=>{
 
@@ -80,17 +82,30 @@ describe("Test ChatRooms endpoint for functionality", ()=>{
                 supertest((<ExpressWebServer>webServer).application)
                     .get(CHAT_ROOM_ENDPOINTS.list())
                     .set("Authorization", authHeaders(_users[0].id)["headers"]["Authorization"])
+                    .expect(200)
                     .then((response:Response)=>{
-                        new GetUserChatRoomsUsecase().execute({userId: _users[0].id}).then((_response: GetUserChatRoomsUsecaseResponse)=>{
-                            expect(JSON.stringify(response.body)).to.equal(JSON.stringify(_response));
-                            done()
+                        new GetUserChatRoomsUsecase().execute({userId: _users[0].id})
+                        .then((_response: GetUserChatRoomsUsecaseResponse)=>{
+                            console.log("RESPONSE:");
+                            console.log(JSON.stringify(response.body));
+                            expect(JSON.stringify(response.body.data)).to.equal(JSON.stringify(_response));
+                            done();
                         })
-                        .catch((e)=>done(e));
+                        .catch((e)=>{
+                            console.log(e);
+                            done(e)
+                        });
                     })
-                    .catch((e:Error)=>done(e));
-            }).catch((e:Error)=>done(e));
+                    .catch((e)=>{
+                        console.log(e);
+                        done(e)});
+            }).catch((e)=>{
+                console.log(e);
+                done(e)});
 
-        }).catch((e:Error)=>done(e));
+        }).catch((e)=>{
+            console.log(e);
+            done(e)});
         }, 1000);
 
         

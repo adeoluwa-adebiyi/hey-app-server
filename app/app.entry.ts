@@ -13,6 +13,7 @@ import bodyParser from "body-parser";
 import { INDEX_ENDPOINT } from "./routes/urls";
 import { IndexRouter } from "./routes/express/index.route";
 import { ChatRoomRouter, CHATROOM_USER_ROUTE_ENDPOINT } from "./routes/express/chatroom.route";
+import { ChatRoomsRouter, CHATROOMS_ENDPOINT } from "./routes/express/chatrooms.route";
 
 
 const database: DatabaseSpec = container.resolve("DatabaseSpec");
@@ -26,6 +27,8 @@ database.connect().then(()=>{
   httpServer.addRoute(INDEX_ENDPOINT, IndexRouter);
 
   httpServer.addRoute(CHATROOM_USER_ROUTE_ENDPOINT, ChatRoomRouter);
+
+  httpServer.addRoute(CHATROOMS_ENDPOINT, ChatRoomsRouter);
 
   httpServer.listen(parseInt(PORT.toString()), HOST);
 })

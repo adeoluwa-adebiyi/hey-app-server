@@ -4,6 +4,7 @@ import { inject, injectable } from "tsyringe";
 import { TokenAuthSpec } from "../contracts/tokenauthspec.interface";
 import { UserRepositorySpec } from "../../domain/repositories/repository.interface";
 import { nextTick } from "process";
+import { UserModel } from "../../domain/entities/user.model";
 
 @injectable()
 export class JWTAuthentication implements AuthenticationSpec<express.RequestHandler>{
@@ -14,9 +15,20 @@ export class JWTAuthentication implements AuthenticationSpec<express.RequestHand
 
     provideAuthentication(exemptedRoutes:Array<string>): express.RequestHandler{
         
-        const requestHandler: express.RequestHandler = (req:Request, res:Response, next)=>{
+        const requestHandler: express.RequestHandler = async(req:any, res:any, next)=>{
             let exempted = false;
+
             try{
+
+                try{
+                    const bearer = req.header("Authorization").split(" ")[1];
+                    const decoded:any = await this.tokenAuthentication.decodeToken(bearer);
+                    const user:UserModel = await this.userRepository.getUserById({id: decoded.body.sub});
+                    req.user = user;
+
+                }catch(e){
+                    console.log(e);
+                }
 
                 for(let route of exemptedRoutes){
                     if(req.originalUrl.toString() === route.toString()){
@@ -26,18 +38,8 @@ export class JWTAuthentication implements AuthenticationSpec<express.RequestHand
                 }
                 
                 if(exempted){
-                    console.log("HEADERS:");
-                    console.log(req.get("Authorization"));
-                    // const bearer = req.header("Authorization").split(" ")[1];
-                    // this.tokenAuthentication.decodeToken(bearer).then(async(decoded:any)=>{
-                    //     req.user = await this.userRepository.getUserById({id: decoded.sub});
-                    //     console.log("DECODED_USER: ");
-                    //     console.log(req.user);
- 
-                    // })
                     next();
                     return;
-
                 }
 
                 if(!req.headers.authorization)
@@ -49,6 +51,7 @@ export class JWTAuthentication implements AuthenticationSpec<express.RequestHand
                         res.status(401).send({message: "Authentication failed"})
                     }else{
                         next();
+                        return;
                     }
                 });
 
