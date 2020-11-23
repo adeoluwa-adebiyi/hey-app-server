@@ -21,10 +21,14 @@ export class JWTAuthentication implements AuthenticationSpec<express.RequestHand
             try{
 
                 try{
-                    const bearer = req.header("Authorization").split(" ")[1];
-                    const decoded:any = await this.tokenAuthentication.decodeToken(bearer);
-                    const user:UserModel = await this.userRepository.getUserById({id: decoded.body.sub});
-                    req.user = user;
+                    if(req.header("Authorization")){
+                        const bearer = req.header("Authorization").split(" ")[1];
+                        const decoded:any = await this.tokenAuthentication.decodeToken(bearer);
+                        const user:UserModel = await this.userRepository.getUserById({id: decoded.body.sub});
+                        req.user = user;
+                    }else{
+                        req.user = null
+                    }
 
                 }catch(e){
                     console.log(e);
