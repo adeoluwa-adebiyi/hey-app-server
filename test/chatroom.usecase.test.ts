@@ -7,7 +7,7 @@ import { UserJSON, UserModel } from "../app/domain/entities/user.model";
 import path from "path";
 import { emptyDB, seedDB } from "../seed_db";
 import fs from "fs";
-import { CreateChatRoomUsecase, CreateChatRoomUsecaseResponse, DeleteChatRoomUsecase, GetChatRoomByRoomKeyUseCase, GetChatRoomByRoomKeyUseCaseResponse } from "../app/domain/usecases/create-chatroom.usecase";
+import { CreateChatRoomUsecase, CreateChatRoomUsecaseResponse, DeleteChatRoomUsecase, GetChatRoomByUserIdUseCase } from "../app/domain/usecases/create-chatroom.usecase";
 import { expect } from "chai";
 import { response } from "express";
 
@@ -79,8 +79,8 @@ describe("Tests ChatRoomUsecase for functionality", ()=>{
             new CreateChatRoomUsecase().execute({users:registeredUsers.map((user: UserModel)=>user.id)})
             .then((createChatRoomUsecaseResponse: CreateChatRoomUsecaseResponse)=>{
 
-                new GetChatRoomByRoomKeyUseCase().execute({roomKey: createChatRoomUsecaseResponse.roomKey})
-                .then((response:GetChatRoomByRoomKeyUseCaseResponse)=>{
+                new GetChatRoomByUserIdUseCase().execute({roomKey: createChatRoomUsecaseResponse.roomKey})
+                .then((response:any)=>{
                     expect(response.chatRoom.chatRoom.roomKey).to.equal(createChatRoomUsecaseResponse.roomKey);
                     expect(response.chatRoom.users.map((user:UserJSON)=>user.id)).contains(registeredUsers[0].id);
                     expect(response.chatRoom.users.map((user:UserJSON)=>user.id)).contains(registeredUsers[1].id);

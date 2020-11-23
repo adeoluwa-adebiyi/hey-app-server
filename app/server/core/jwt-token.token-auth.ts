@@ -1,6 +1,8 @@
 import { TokenAuthSpec } from "../contracts/tokenauthspec.interface";
 import njwt, { Jwt } from "njwt";
 import { injectable } from "tsyringe";
+import { claims } from "../../../test/test.data";
+import jwtLib from "njwt";
 
 @injectable()
 export class JWTTokenAuthAlgorithm implements TokenAuthSpec{
@@ -13,6 +15,7 @@ export class JWTTokenAuthAlgorithm implements TokenAuthSpec{
         this.secret = Buffer.from(secret);
         this.algorithm = algorithm;
     }
+
     generateRefreshToken(claims: any): string {
         throw new Error("Method not implemented.");
     }
@@ -29,6 +32,10 @@ export class JWTTokenAuthAlgorithm implements TokenAuthSpec{
 
     generateToken(claims: any) {
         return njwt.create(claims, this.secret, this.algorithm).compact();
+    }
+
+    async decodeToken(token:any): Promise<any>{
+        return jwtLib.verify(token, this.secret, this.algorithm);
     }
 
 }

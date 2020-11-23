@@ -50,7 +50,7 @@ export class PgSQLUserRepository implements UserRepositorySpec{
         const {email, id } = userId;
         if(id){
             const response = await ((this.getDatabaseConnector())).query(GET_USER_BY_ID_QUERY,[id]);
-            if(!response){
+            if(response.length ===0){
                 throw new ObjectNotFoundException(`User with id ${id} does not exist`);
             }
             return new UserModel().fromJSON(( response[0] ));

@@ -91,14 +91,21 @@ describe("Tests ChatRoomMessageUsecases for functionality", ()=>{
 
                         new PostChatRoomMessageUsecase().execute({...MESSAGE_DATA, referencedMessage:89, sender:user.id, chatRoomId: chatRooms[0].roomKey})
                         .then((messageResponse: PostChatRoomMessageUsecaseResponse)=>{
+
                             const { chatRoomMessage } = messageResponse;
                             const obj = chatRoomMessage;
+
                             new GetAllChatRoomMessagesUsecase().execute({chatRoomId: chatRooms[0].roomKey, offset:0, limit:50}).then((value: GetAllChatRoomMessagesUsecaseResponse)=>{
+                                
                                 const { chatRoomMessagesData } = value;
-                                const {chatRoom, messages } = chatRoomMessagesData;
+
+                                const { chatRoom, messages } = chatRoomMessagesData;
+
                                 const { id, sender, message, messageType, referencedMessage, chatRoomId, time } = messages[0];
 
-                                console.log(obj);
+                                console.log("MESSAGES:");
+                                console.log(messages);
+
                                 expect(obj.id).to.be.a("number");
                                 expect(obj.message).to.equal(message);
                                 expect(obj.sender).to.equal(user.id);
@@ -107,19 +114,30 @@ describe("Tests ChatRoomMessageUsecases for functionality", ()=>{
                                 expect(obj.chatRoomId).to.equal(chatRooms[0].roomKey);
                                 expect(new Date(obj.time).toLocaleDateString()).to.equal(new Date(time).toLocaleDateString());
                                 done();
-                            })
+
+                            }).catch((e)=>{
+                                console.log(e);
+                                done(e);
+                            });
 
                         }
-                        ).catch((e:Error)=>done(e));
+                        ).catch((e:Error)=>{
+                            console.log(e);
+                            done(e);
+                        });
         
                     }).catch((e:Error)=>{
+                        console.log(e);
                         done(e);
                     });
                 })
 
-            }).catch((e: Error)=>done(e));
+            }).catch((e: Error)=>{
+                console.log(e);
+                done(e);
+            });
 
-        },1000)
+        },5000)
     });
 
 

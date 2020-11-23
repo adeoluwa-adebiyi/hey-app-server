@@ -6,4 +6,4 @@ EXPOSE 80
 WORKDIR /usr/home/backend
 COPY . .
 RUN npm install
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start_dev"]

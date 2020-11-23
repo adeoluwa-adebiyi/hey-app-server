@@ -45,9 +45,9 @@ export class AuthenticateUserUsecase implements UseCaseSpec<Promise<AuthTokenMod
                 throw new InvalidLoginCredentialsException("Invalid login credentials");
             }
             if(user && passwordCorrect){
-                const accessTokenClaims:UserAuthClaim = {
+                const accessTokenClaims:any = {
                     expiresAt: accessTokenExpiryDuration(),
-                    id: user.id
+                    sub: user.id
                 }
                 return new AuthTokenModel(
                     this.tokenAuthALgporithm.generateToken(accessTokenClaims),

@@ -21,6 +21,7 @@ router.get("/", (req: Request, res: Response)=>{
 router.post(REGISTER_USER_ENDPOINT, async(req: Request, res: Response)=>{
     try{
         const params = req.body;
+        console.log(params);
         const response = await new RegisterUserUsecase().execute({...params});
         if(response && response.user){
             const { user } = response;
@@ -42,6 +43,7 @@ router.post(REGISTER_USER_ENDPOINT, async(req: Request, res: Response)=>{
             throw Error("Interbal error");
         }
     }catch(e){
+        console.log(e);
         res.status(500).send({
             error: "Internal Server error",
             message: "Internal Server error",

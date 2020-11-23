@@ -80,30 +80,30 @@ export interface ChatRoomResponseJSON{
 }
 
 
-export interface GetChatRoomByRoomKeyUseCaseResponse {
+export interface GetChatRoomByUserIdUseCaseResponse {
     chatRoom: ChatRoomResponseJSON
 }
 
 
-export interface GetChatRoomByRoomKeyParams{
+export interface GetChatRoomByUserIdParams{
     roomKey: string
 }
 
 
 @autoInjectable()
 @singleton()
-export class GetChatRoomByRoomKeyUseCase implements UseCaseSpec<Promise<GetChatRoomByRoomKeyUseCaseResponse>>{
+export class GetChatRoomByUserIdUseCase implements UseCaseSpec<Promise<GetChatRoomByUserIdUseCaseResponse>>{
 
     constructor(
         @inject("ChatRoomRepositorySpec") private chatRoomRepository?: ChatRoomRepositorySpec,
         @inject("UserRepositorySpec") private userRepository?: UserRepositorySpec
     ){}
 
-    async execute(params: GetChatRoomByRoomKeyParams): Promise<GetChatRoomByRoomKeyUseCaseResponse> {
+    async execute(params: GetChatRoomByUserIdParams): Promise<GetChatRoomByUserIdUseCaseResponse> {
             const { roomKey } = params;
             const response = await this.chatRoomRepository.getUserChatRoomsByRoomKey(roomKey);
             const users = await Promise.all([...response.map((chatRoom: ChatRoomModel)=>this.userRepository.getUserById({id:chatRoom.userId}))]);
-            return <GetChatRoomByRoomKeyUseCaseResponse>{
+            return <GetChatRoomByUserIdUseCaseResponse>{
                 chatRoom:<ChatRoomResponseJSON>{
                     chatRoom: {...response[0].toJSON(), userId:null},
                     users: users.map((user)=>user.toJSON())
