@@ -51,8 +51,8 @@ export interface GetAllChatRoomMessagesUsecaseResponse{
 
 export interface GetAllChatRoomMessagesUsecaseParams{
     chatRoomId: string;
-    offset: number;
-    limit: number;
+    offset?: number;
+    limit?: number;
 }
 
 

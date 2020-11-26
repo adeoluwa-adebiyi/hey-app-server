@@ -29,6 +29,8 @@ export class GetUserChatRoomsUsecase implements UseCaseSpec<Promise<GetUserChatR
     async execute(params: GetUserChatRoomsUsecaseParams):  Promise<GetUserChatRoomsUsecaseResponse>{
         // throw Error("Method not implemented");
         const { userId } = params;
+        console.log("U_CHATROOMS:")
+        console.log(userId);
         const response: ChatRoomModel[] = await this.chatRoomRepo.getUserChatRooms(await this.userRepo.getUserById({id: userId}));
         const fetched: ChatRoomModelWithUserJSON[] =  await Promise.all(response.map(async(model:ChatRoomModel)=>{
             const rooms:ChatRoomModel[] = await this.chatRoomRepo.getUserChatRoomsByRoomKey(model.roomKey);
