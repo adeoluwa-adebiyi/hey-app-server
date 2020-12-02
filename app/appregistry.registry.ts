@@ -40,6 +40,11 @@ import {
     WS_REDIS_PORT,
     WS_REDIS_URL,
     WS_REDIS_USERNAME,
+    KAFKA_BROKERS,
+    KAFKA_CLIENT_ID,
+    KAFKA_PASSWORD,
+    KAFKA_USERNAME,
+    KAFKA_SSL
 } from "../app/config/app.config";
 import { createClient, ClientOpts } from "redis";
 import { RedisCache } from "./data/datasources/redis.cache";
@@ -55,6 +60,9 @@ import { CHATROOMS_ENDPOINT, ChatRoomsRouter } from "./routes/express/chatrooms.
 import { IndexRouter } from "./routes/express/index.route";
 import { INDEX_ENDPOINT, CHATROOM_MESSAGES_ENDPOINT } from "./routes/urls";
 import { createServer, Server } from "http";
+import { Kafka, KafkaConfig } from "kafkajs"
+import { MessageBrokerSpec } from "./server/brokers/contracts/broker.interface";
+import { KafkaJSMessageBroker } from "./server/brokers/kafkajs.broker";
 
 
 const APP_SECRET = SECRET;
@@ -75,7 +83,17 @@ const WS_REDIS_CACHE = new RedisCache(createClient(<ClientOpts>{
     url: WS_REDIS_URL
 }));
 
-const SOCK_USER_ID_MAP_KEY = "SOCK_USER_MAP";
+const kafka = new Kafka(<KafkaConfig>{
+    clientId: KAFKA_CLIENT_ID,
+    brokers: KAFKA_BROKERS.split(","),
+    ssl: true,
+    sasl: {
+        mechanism: "scram-sha-256",
+        username: KAFKA_USERNAME,
+        password: KAFKA_PASSWORD
+    },
+});
+
 
 DATABASE.setConnection(DB_HOST, Number(DB_PORT), DB_USERNAME, DB_NAME, DB_PASSWORD);
 
@@ -135,3 +153,5 @@ container.register<WebSocketServerSpec>("WebSocketServerSpec", {
 });
 
 container.register<UserMessageNotifierSpec>("UserMessageNotifierSpec", { useValue: new WebSocketUserMessageNotifier() });
+
+container.register<MessageBrokerSpec>("MessageBrokerSpec", { useValue: new KafkaJSMessageBroker(kafka) });
