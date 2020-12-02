@@ -4,6 +4,7 @@ import { injectable } from "tsyringe";
 import { claims } from "../../../test/test.data";
 import jwtLib from "njwt";
 
+
 @injectable()
 export class JWTTokenAuthAlgorithm implements TokenAuthSpec{
 

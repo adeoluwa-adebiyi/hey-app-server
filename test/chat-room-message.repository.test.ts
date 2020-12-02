@@ -61,7 +61,7 @@ describe("Tests ChatRoomMessageRepository functionality", ()=>{
             })
         })
                     
-        ,1000);
+        ,5000);
     })
 
     it("Should retrieve valid ChatRoomMessageModels", (done)=>{

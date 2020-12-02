@@ -22,4 +22,9 @@ export interface Cache extends Datasource{
     get(resourceURI: string): any;
 
     set(resourceURI: string, value: any): any;
+
+    reset():any;
+
 }
+
+export interface WsSessionCache extends Cache{};

@@ -1,20 +1,19 @@
+import "reflect-metadata";
 import "./appregistry.registry";
-import spdy from "spdy";
-import express, { Request, Response, Router } from "express";
-import { MiddlewareConfigurable, RoutableWebServerSpec, WebServerSpec } from "./server/contracts/webserverspec.interface";
-import { ExpressWebServer } from "./server/express.webserver";
+import { RoutableWebServerSpec } from "./server/contracts/webserverspec.interface";
 import { container, container as di } from "tsyringe";
-import {env} from "custom-env";
-import process from "process";
 import { PORT, HOST, DB_URI } from "./config/app.config"
 import { AuthRouter, AUTH_USER_ROUTE_ENDPOINT } from "./routes/express/auth.route";
 import { DatabaseSpec } from "./data/datasources/datasource.interface";
-import bodyParser from "body-parser";
 import { CHATROOM_MESSAGES_ENDPOINT, INDEX_ENDPOINT } from "./routes/urls";
 import { IndexRouter } from "./routes/express/index.route";
 import { ChatRoomRouter, CHATROOM_USER_ROUTE_ENDPOINT } from "./routes/express/chatroom.route";
 import { ChatRoomsRouter, CHATROOMS_ENDPOINT } from "./routes/express/chatrooms.route";
 import { ChatRoomMessagesRouter } from "./routes/express/chatroom-messages.route";
+import { createServer, Server } from "http";
+import { ExpressWebServer } from "./server/express.webserver";
+import { Server as WsServer } from "socket.io";
+import { WebSocketServerSpec } from "./server/core/websocket/websocket.webserver";
 
 
 const database: DatabaseSpec = container.resolve("DatabaseSpec");
@@ -24,17 +23,11 @@ database.connect().then(()=>{
   const httpServer: RoutableWebServerSpec = di.resolve("RoutableWebServerSpec");
 
   // Add routes
-  httpServer.addRoute(AUTH_USER_ROUTE_ENDPOINT, AuthRouter);
 
-  httpServer.addRoute(INDEX_ENDPOINT, IndexRouter);
+  const server: Server = createServer((<ExpressWebServer>httpServer).application);
 
-  httpServer.addRoute(CHATROOM_USER_ROUTE_ENDPOINT, ChatRoomRouter);
+  (<WsServer>container.resolve<WebSocketServerSpec>("WebSocketServerSpec")).listen(server);
 
-  httpServer.addRoute(CHATROOMS_ENDPOINT, ChatRoomsRouter);
-
-  httpServer.addRoute(CHATROOM_MESSAGES_ENDPOINT, ChatRoomMessagesRouter);
-
-  httpServer.listen(parseInt(PORT.toString()), HOST);
-
+  server.listen(parseInt(PORT.toString()), HOST);
 })
 
