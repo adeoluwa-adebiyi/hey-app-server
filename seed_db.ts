@@ -51,7 +51,7 @@ export const emptyDB = async(db: DatabaseSpec): Promise<any> =>{
 
     return db.connect().then((connMsg:any)=>{
         return Promise.all([
-            
+            db.getConnector().query(`DELETE FROM ${_CHAT_ROOM_MESSAGE_TABLE_NAME}`),
             db.getConnector().query(`DELETE FROM ${CHATROOM_TABLE_NAME}`),
             db.getConnector().query(`DELETE FROM ${_USER_TABLE_NAME}`)
 

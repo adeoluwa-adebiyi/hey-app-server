@@ -52,7 +52,7 @@ describe("Tests ChatRoomRepository", ()=>{
                     }).catch(e=>done(e));
                 }).catch(e=>done(e));
             }).catch(e=>done(e));
-        }).catch(e=>done(e)), 1000);
+        }).catch(e=>done(e)), 5000);
         
     });
 
@@ -80,7 +80,7 @@ describe("Tests ChatRoomRepository", ()=>{
                     console.log(e);
                     done(e);
                 });    
-            }, 1000);
+            }, 5000);
     });
 
 
@@ -102,7 +102,7 @@ describe("Tests ChatRoomRepository", ()=>{
                 }).catch((e:any)=>{done(e)});
             })
             .catch((e:any)=>done(e));
-        },1000);
+        },5000);
     });
 
     it("Should retrieve user chatroom by ID", (done)=>{
@@ -121,7 +121,7 @@ describe("Tests ChatRoomRepository", ()=>{
                 }).catch((e:any)=>{done(e)});
             })
             .catch((e:any)=>done(e));
-        },1000);
+        },5000);
     });
 
     it("Should delete user chatrooms by roomKey", (done)=>{
@@ -138,7 +138,7 @@ describe("Tests ChatRoomRepository", ()=>{
                 }).catch((e:any)=>{done(e)});
             })
             .catch((e:any)=>done(e));
-        },1000);
+        },5000);
         
     });
 
@@ -161,7 +161,7 @@ describe("Tests ChatRoomRepository", ()=>{
                 }).catch((e:any)=>{done(e)});
             })
             .catch((e:any)=>done(e));
-        },1000);
+        },5000);
     });
 
 });

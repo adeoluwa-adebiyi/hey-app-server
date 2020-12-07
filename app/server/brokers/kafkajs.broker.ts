@@ -1,6 +1,6 @@
 import { KafkaMessageBrokerSpec } from "./contracts/broker.interface";
 import { Message as IMessage } from "./contracts/message.interface";
-import { Kafka, Producer, Consumer, Message } from "kafkajs";
+import { Kafka, Producer, Consumer, Message, ConsumerSubscribeTopic } from "kafkajs";
 import { autoInjectable, injectable } from "tsyringe";
 
 
@@ -11,8 +11,7 @@ export class KafkaJSMessageBroker implements KafkaMessageBrokerSpec {
     private consumer: Consumer;
     private groupId: string;
 
-    constructor(private kafkaClient?: Kafka) {
-    }
+    constructor(private kafkaClient: Kafka) {}
 
     async initProducer(): Promise<KafkaJSMessageBroker> {
         this.producer = this.kafkaClient.producer();
@@ -27,7 +26,9 @@ export class KafkaJSMessageBroker implements KafkaMessageBrokerSpec {
         return this;
     }
 
-    publish(message: IMessage, channel: string, opts: any): Promise<any> {
+    async publish(message: IMessage, channel: string, opts?: any): Promise<any> {
+        if(!this.producer)
+            await this.initProducer();
         return this.producer.send({
             topic: channel,
             messages: [<Message>{
@@ -36,8 +37,8 @@ export class KafkaJSMessageBroker implements KafkaMessageBrokerSpec {
         })
     }
 
-    async subscribe(channel: string, consumer: any, opts: any): Promise<any>{
-        await this.consumer.subscribe({topic:channel});
+    async subscribe(channel: string, consumer: any, opts?: ConsumerSubscribeTopic): Promise<any>{
+        await this.consumer.subscribe({topic:channel,...opts});
         return this.consumer.run({ eachMessage: consumer });
     }
 

@@ -10,7 +10,7 @@ import { emptyDB, seedDB } from "../seed_db";
 import fs from "fs";
 import { WsMsg, WsSuccessMsg } from "../app/server/core/websocket/types/ws-data-types.interface";
 import { ExpressWebServer } from "../app/server/express.webserver";
-import { CHATROOM_MESSAGE_NOTIFY_EVENT, createWebSocketServer, WebSocketServerSpec } from "../app/server/core/websocket/websocket.webserver";
+import { WS_CHATROOM_MESSAGE_NOTIFY_EVENT, createWebSocketServer, WebSocketServerSpec } from "../app/server/core/websocket/websocket.webserver";
 import { createServer, Server } from "http";
 import io from "socket.io-client";
 import { TokenAuthSpec } from "../app/server/contracts/tokenauthspec.interface";

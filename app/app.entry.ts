@@ -23,11 +23,21 @@ database.connect().then(()=>{
   const httpServer: RoutableWebServerSpec = di.resolve("RoutableWebServerSpec");
 
   // Add routes
+  httpServer.addRoute(AUTH_USER_ROUTE_ENDPOINT, AuthRouter);
+
+  httpServer.addRoute(INDEX_ENDPOINT, IndexRouter);
+
+  httpServer.addRoute(CHATROOM_USER_ROUTE_ENDPOINT, ChatRoomRouter);
+
+  httpServer.addRoute(CHATROOMS_ENDPOINT, ChatRoomsRouter);
+
+  httpServer.addRoute(CHATROOM_MESSAGES_ENDPOINT, ChatRoomMessagesRouter);
 
   const server: Server = createServer((<ExpressWebServer>httpServer).application);
 
   (<WsServer>container.resolve<WebSocketServerSpec>("WebSocketServerSpec")).listen(server);
 
   server.listen(parseInt(PORT.toString()), HOST);
+  
 })
 

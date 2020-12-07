@@ -1,5 +1,6 @@
 import { type } from "os";
-import { ChatRoomMessageJSON } from "../../../../domain/entities/chat-room-message.model";
+import { ChatRoomMessageJSON, ChatRoomMessageModel } from "../../../../domain/entities/chat-room-message.model";
+import { ChatRoomModelJSON } from "../../../../domain/entities/chatroom.model";
 import { UserAuthId } from "../../../../domain/entities/user.model";
 
 export interface WsErrorMsg{
@@ -11,7 +12,9 @@ export type WsErrorMessage = WsErrorMsg ;
 
 export type WsAuthErrorMsg = WsErrorMsg;
 
-export type InternalErrorMsg = WsErrorMsg;
+export type WsInternalErrorMsg = WsErrorMsg;
+
+export type WsClientSendMessagePayload = ChatRoomMessageJSON;
 
 export interface WsChatRoomNotificationMessage{
     sender: UserAuthId;

@@ -9,9 +9,11 @@ export interface MessageBrokerSpec{
 }
 
 export interface KafkaMessageBrokerSpec extends MessageBrokerSpec{
+
     initProducer(): Promise<KafkaMessageBrokerSpec>;
 
     initConsumer(groupId?:string): Promise<KafkaMessageBrokerSpec>;
 
     disconnect(): Promise<void>;
+    
 }

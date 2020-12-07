@@ -3,7 +3,6 @@ import path from "path";
 import "reflect-metadata";
 import { container } from "tsyringe";
 import { DatabaseSpec } from "../app/data/datasources/datasource.interface";
-import { ChatRoomMessageModel } from "../app/domain/entities/chat-room-message.model";
 import { ChatRoomModel } from "../app/domain/entities/chatroom.model";
 import { UserModel } from "../app/domain/entities/user.model";
 import { ChatRoomMessageRepositorySpec, UserRepositorySpec, ChatRoomRepositorySpec } from "../app/domain/repositories/repository.interface";
@@ -29,8 +28,8 @@ describe("Tests ChatRoomMessageUsecases for functionality", ()=>{
     beforeEach(async ()=>{
         loadedUsers = JSON.parse(fs.readFileSync(path.resolve("./app/data/fixtures/users.fixture.json")).toString()).users.map((user:any)=>new UserModel().fromJSON(user));
         await database.connect();
-        emptyDB(database).then(async()=>{
-            await seedDB(database);
+        emptyDB(database).then(()=>{
+            seedDB(database).then(()=>{});
         });
     });
 
@@ -39,7 +38,6 @@ describe("Tests ChatRoomMessageUsecases for functionality", ()=>{
         setTimeout(()=>{
 
             const { id, sender, message, messageType, referencedMessage, chatRoomId, time } = MESSAGE_DATA;
-
 
             Promise.all([
                 userRepo.getUserById({email: loadedUsers[0].email}),
@@ -54,7 +52,6 @@ describe("Tests ChatRoomMessageUsecases for functionality", ()=>{
                         .then((messageResponse: PostChatRoomMessageUsecaseResponse)=>{
                             const { chatRoomMessage } = messageResponse;
                             const obj = chatRoomMessage;
-                            console.log(obj);
                             expect(obj.id).to.be.a("number");
                             expect(obj.message).to.equal(message);
                             expect(obj.sender).to.equal(user.id);
@@ -73,7 +70,7 @@ describe("Tests ChatRoomMessageUsecases for functionality", ()=>{
 
             }).catch((e: Error)=>done(e));
 
-        },1000)
+        },5000)
     });
 
 
@@ -103,9 +100,6 @@ describe("Tests ChatRoomMessageUsecases for functionality", ()=>{
 
                                 const { id, sender, message, messageType, referencedMessage, chatRoomId, time } = messages[0];
 
-                                console.log("MESSAGES:");
-                                console.log(messages);
-
                                 expect(obj.id).to.be.a("number");
                                 expect(obj.message).to.equal(message);
                                 expect(obj.sender).to.equal(user.id);
@@ -133,6 +127,7 @@ describe("Tests ChatRoomMessageUsecases for functionality", ()=>{
                 })
 
             }).catch((e: Error)=>{
+                console.log("ERROR");
                 console.log(e);
                 done(e);
             });

@@ -53,16 +53,11 @@ import { UserIdSocketSessionMap } from "./server/core/websocket/sessions/userid-
 import { UserMessageNotifierSpec } from "./domain/notifiers/user-notifier.interface";
 import { WebSocketUserMessageNotifier } from "./domain/notifiers/websocket-user-message.notifier";
 import { createWebSocketServer, WebSocketServerSpec } from "./server/core/websocket/websocket.webserver";
-import { AUTH_USER_ROUTE_ENDPOINT, AuthRouter } from "./routes/express/auth.route";
-import { ChatRoomMessagesRouter } from "./routes/express/chatroom-messages.route";
-import { CHATROOM_USER_ROUTE_ENDPOINT, ChatRoomRouter } from "./routes/express/chatroom.route";
-import { CHATROOMS_ENDPOINT, ChatRoomsRouter } from "./routes/express/chatrooms.route";
-import { IndexRouter } from "./routes/express/index.route";
-import { INDEX_ENDPOINT, CHATROOM_MESSAGES_ENDPOINT } from "./routes/urls";
-import { createServer, Server } from "http";
 import { Kafka, KafkaConfig } from "kafkajs"
-import { MessageBrokerSpec } from "./server/brokers/contracts/broker.interface";
+import { KafkaMessageBrokerSpec, MessageBrokerSpec } from "./server/brokers/contracts/broker.interface";
 import { KafkaJSMessageBroker } from "./server/brokers/kafkajs.broker";
+import { MessageBrokerSubscriptionsManagerSpec } from "./domain/subscriptions/manager.interface";
+import { KafkaSubscriptionManager } from "./domain/subscriptions/kafkajs-subscription.manager";
 
 
 const APP_SECRET = SECRET;
@@ -88,7 +83,7 @@ const kafka = new Kafka(<KafkaConfig>{
     brokers: KAFKA_BROKERS.split(","),
     ssl: true,
     sasl: {
-        mechanism: "scram-sha-256",
+        mechanism: "plain",
         username: KAFKA_USERNAME,
         password: KAFKA_PASSWORD
     },
@@ -124,28 +119,24 @@ container.register<SocketUserIdSessionMapSpec>("SocketUserIdSessionMapSpec", { u
 
 const webServer: ExpressWebServer = new ExpressWebServer(container.resolve("AuthenticationSpec<<express.RequestHandler>>"), EXEMPTED_ROUTES);
 
-// webServer.addRoute(AUTH_USER_ROUTE_ENDPOINT, AuthRouter);
-
-// webServer.addRoute(INDEX_ENDPOINT, IndexRouter);
-
-// webServer.addRoute(CHATROOM_USER_ROUTE_ENDPOINT, ChatRoomRouter);
-
-// webServer.addRoute(CHATROOMS_ENDPOINT, ChatRoomsRouter);
-
-// webServer.addRoute(CHATROOM_MESSAGES_ENDPOINT, ChatRoomMessagesRouter);
-
 (<MiddlewareConfigurable>webServer).addMiddleware(bodyParser.json());
 
 container.register<RoutableWebServerSpec>("RoutableWebServerSpec", { useValue: webServer });
 
-// container.register<Server>("Server", {useValue: createServer((<ExpressWebServer>webServer).application)});
+const broker: KafkaMessageBrokerSpec =  new KafkaJSMessageBroker(kafka)
+
+container.register<MessageBrokerSpec>("MessageBrokerSpec", { useValue:  broker});
+
+container.register<MessageBrokerSubscriptionsManagerSpec>("MessageBrokerSubscriptionsManagerSpec", { useValue: new KafkaSubscriptionManager(kafka) });
 
 const webSocketServer = createWebSocketServer(
     container.resolve<TokenAuthSpec>("TokenAuthSpec"),
     container.resolve<UserRepositorySpec>("UserRepositorySpec"),
     container.resolve<SocketUserIdSessionMapSpec>("SocketUserIdSessionMapSpec"),
     container.resolve<UserIdSocketSessionMapSpec>("UserIdSocketSessionMapSpec"),
-    container.resolve<RoutableWebServerSpec>("RoutableWebServerSpec")
+    container.resolve<RoutableWebServerSpec>("RoutableWebServerSpec"),
+    container.resolve<MessageBrokerSpec>("MessageBrokerSpec"),
+    container.resolve<ChatRoomRepositorySpec>("ChatRoomRepositorySpec")
 );
 
 container.register<WebSocketServerSpec>("WebSocketServerSpec", {
@@ -153,5 +144,3 @@ container.register<WebSocketServerSpec>("WebSocketServerSpec", {
 });
 
 container.register<UserMessageNotifierSpec>("UserMessageNotifierSpec", { useValue: new WebSocketUserMessageNotifier() });
-
-container.register<MessageBrokerSpec>("MessageBrokerSpec", { useValue: new KafkaJSMessageBroker(kafka) });

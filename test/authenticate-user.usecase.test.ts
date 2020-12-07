@@ -52,7 +52,7 @@ describe("Tests AuthenticateUser usecase functionality", ()=>{
                 done(e);
                 })
     //    })
-        , 1000);
+        , 5000);
     }); 
 
     it("Should return InvalidLoginCredentialsException for invalid login credentials", (done)=>{
@@ -71,7 +71,7 @@ describe("Tests AuthenticateUser usecase functionality", ()=>{
 
             });
            })
-        ,1000);
+        ,5000);
     }); 
 
 })
