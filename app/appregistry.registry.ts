@@ -58,6 +58,7 @@ import { KafkaMessageBrokerSpec, MessageBrokerSpec } from "./server/brokers/cont
 import { KafkaJSMessageBroker } from "./server/brokers/kafkajs.broker";
 import { MessageBrokerSubscriptionsManagerSpec } from "./domain/subscriptions/manager.interface";
 import { KafkaSubscriptionManager } from "./domain/subscriptions/kafkajs-subscription.manager";
+import { KChatMessageNotifierMessageBrokerSubscription } from "./domain/subscriptions/ssubscriptions";
 
 
 const APP_SECRET = SECRET;
@@ -123,7 +124,7 @@ const webServer: ExpressWebServer = new ExpressWebServer(container.resolve("Auth
 
 container.register<RoutableWebServerSpec>("RoutableWebServerSpec", { useValue: webServer });
 
-const broker: KafkaMessageBrokerSpec =  new KafkaJSMessageBroker(kafka)
+const broker: KafkaMessageBrokerSpec =  new KafkaJSMessageBroker(kafka);
 
 container.register<MessageBrokerSpec>("MessageBrokerSpec", { useValue:  broker});
 

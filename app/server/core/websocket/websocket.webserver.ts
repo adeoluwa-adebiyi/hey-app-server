@@ -91,6 +91,7 @@ export const createWebSocketServer = (
     const beginWebSocketService = (socket: Socket) => {
 
         socket.on(WS_CHATROOM_MESSAGE_SEND_EVENT, async(msg) => {
+            console.log("SENT MESSAGE:");
             try{
                 console.log("RECEIVED MESSAGE:");
                 console.log(msg);
@@ -122,6 +123,8 @@ export const createWebSocketServer = (
 
 
     socketServer.on("connection", (socket: Socket) => {
+
+        console.log("ATTEMPT AUTHENTICATION");
 
         socket.on("authenticate", (msg: string) => {
             const serialized: JWTLogin = JSON.parse(msg);

@@ -34,16 +34,29 @@ export class KafkaSubscriptionManager implements MessageBrokerSubscriptionsManag
 
     async registerSubscriptions(subscriptions: MessageBrokerSubscriptionSpec[]): Promise<void> {
 
+        console.log("CALLED REGISTER");
+
         await Promise.all(subscriptions.map((subscription) => {
-            return new Promise(async(resolve) => {
+            return new Promise(async (resolve) => {
                 const consumer = this.kafkaClient.consumer({ groupId: "ws-sock-servers" });
-                await consumer.connect();
-                await consumer.subscribe({ topic: subscription.getEvent() });
-                await consumer.run({ eachMessage: async (payload) => await subscription.consumer(payload) });
-                this.consumerMap.set(subscription.getEvent(), consumer);
-                resolve();
+                consumer.connect().then(() => {
+                    consumer.subscribe({ topic: subscription.getEvent(), fromBeginning: false }).then(() => {
+                        consumer.run({
+                             eachMessage: async (payload) => {
+                                 console.log("MESSAGE:");
+                                 console.log(payload.message.value.toString())
+                                 subscription.consumer(payload)} ,
+                            }).then(() => {
+                            this.consumerMap.set(subscription.getEvent(), consumer);
+                            resolve();
+                        });
+                    });
+
+                })
+
             })
         }));
+
     }
 
 }
