@@ -71,13 +71,28 @@ const EXEMPTED_ROUTES: Array<string> = [
 
 const DATABASE = new PostgresDatabase();
 
-const WS_REDIS_CACHE = new RedisCache(createClient(<ClientOpts>{
-    host: WS_REDIS_HOST,
-    password: WS_REDIS_PASSWORD,
+const REDIS_CACHE = new RedisCache(createClient(<ClientOpts>{
+    host: REDIS_HOST,
+    password: REDIS_PASSWORD,
     db: 0,
-    port: WS_REDIS_PORT,
-    url: WS_REDIS_URL
-}));
+    port: REDIS_PORT,
+    url: REDIS_URL
+}),
+createClient(<ClientOpts>{
+    host: REDIS_HOST,
+    password: REDIS_PASSWORD,
+    db: 0,
+    port: REDIS_PORT,
+    url: REDIS_URL
+}),
+createClient(<ClientOpts>{
+    host: REDIS_HOST,
+    password: REDIS_PASSWORD,
+    db: 0,
+    port: REDIS_PORT,
+    url: REDIS_URL
+})
+);
 
 const kafka = new Kafka(<KafkaConfig>{
     clientId: KAFKA_CLIENT_ID,
@@ -110,7 +125,7 @@ container.register<PasswordHasherSpec>("PasswordHasherSpec", { useValue: new Arg
 
 // container.register<Cache>("Cache", {useValue: REDIS_CACHE});
 
-container.register<WsSessionCache>("WsSessionCache", { useValue: WS_REDIS_CACHE });
+container.register<WsSessionCache>("WsSessionCache", { useValue: REDIS_CACHE });
 
 container.register<UserIdSocketSessionMapSpec>("UserIdSocketSessionMapSpec", { useValue: new UserIdSocketSessionMap() });
 
@@ -142,6 +157,10 @@ const webSocketServer = createWebSocketServer(
 
 container.register<WebSocketServerSpec>("WebSocketServerSpec", {
     useValue: webSocketServer
+});
+
+container.register<RedisCache>("RedisCache", {
+    useValue: REDIS_CACHE
 });
 
 container.register<UserMessageNotifierSpec>("UserMessageNotifierSpec", { useValue: new WebSocketUserMessageNotifier() });

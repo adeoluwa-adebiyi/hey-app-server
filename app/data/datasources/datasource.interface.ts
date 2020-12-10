@@ -1,3 +1,5 @@
+export type SubscribedData = string | any;
+
 export interface Datasource{
     getConnector(): any;
 }
@@ -28,3 +30,11 @@ export interface Cache extends Datasource{
 }
 
 export interface WsSessionCache extends Cache{};
+
+export interface Subscriber{
+    subscribe(event: string, subscriber: any);
+}
+
+export interface Producer{
+    produce(event: string, data: SubscribedData): Promise<void>;
+}

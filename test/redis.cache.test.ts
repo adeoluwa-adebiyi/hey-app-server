@@ -11,70 +11,118 @@ import {
     REDIS_USERNAME
 } from "../app/config/app.config";
 import { expect } from "chai";
+import { SubscribedData } from "../app/data/datasources/datasource.interface";
 
 
 const redisCache: RedisCache = new RedisCache(createClient(<ClientOpts>{
-    host:REDIS_HOST,
-    password:REDIS_PASSWORD,
-    db:0,
-    port:REDIS_PORT,
-    url:REDIS_URL
-}));
+    host: REDIS_HOST,
+    password: REDIS_PASSWORD,
+    db: 0,
+    port: REDIS_PORT,
+    url: REDIS_URL
+}),
+createClient(<ClientOpts>{
+    host: REDIS_HOST,
+    password: REDIS_PASSWORD,
+    db: 0,
+    port: REDIS_PORT,
+    url: REDIS_URL
+}),
+createClient(<ClientOpts>{
+    host: REDIS_HOST,
+    password: REDIS_PASSWORD,
+    db: 0,
+    port: REDIS_PORT,
+    url: REDIS_URL
+})
+);
+
+const TEST_EVENT_NAME: string = "MESSAGE";
+
+const TEST_MESSAGE = {
+    data: "test_slug"
+}
 
 
-describe("Tests Redis Cache for functionality", ()=>{
+describe("Tests Redis Cache for functionality", () => {
 
-    beforeEach(()=>{
+    beforeEach(() => {
         const val = 89;
         redisCache.set("data", val);
     });
 
-    it("Should set key-value relationships correctly", (done)=>{
-        setTimeout(()=>{
+    it("Should set key-value relationships correctly", (done) => {
+        setTimeout(() => {
 
             const val = "67";
-            redisCache.set("data",val).then((_)=>{
-                redisCache.get("data").then((res)=>{
+            redisCache.set("data", val).then((_) => {
+                redisCache.get("data").then((res) => {
                     console.log(`DATA: ${res}`);
                     expect(res.toString()).to.equal(val.toString());
                     done();
-                }).catch((e)=>done(e));
-            }).catch(e=>done(e));
+                }).catch((e) => done(e));
+            }).catch(e => done(e));
 
 
-        },5000);
+        }, 5000);
     });
 
-    it("Should return already set values", (done)=>{
-        setTimeout(()=>{
+    it("Should return already set values", (done) => {
+        setTimeout(() => {
             const val = "89";
-            redisCache.get("data").then((data)=>{
+            redisCache.get("data").then((data) => {
                 expect(data).to.equal(val);
                 done();
-            }).catch((e)=>done(e));
-        },5000);
+            }).catch((e) => done(e));
+        }, 5000);
     });
 
-    it("Should correctly reset Redis instance", (done)=>{
-        setTimeout(()=>{
-            redisCache.reset().then((_)=>{
-                redisCache.get("data").then((val:any)=>{
+    it("Should correctly reset Redis instance", (done) => {
+        setTimeout(() => {
+            redisCache.reset().then((_) => {
+                redisCache.get("data").then((val: any) => {
                     expect(val).to.equal(null);
                     done();
-                }).catch((e)=>done(e));
-            }).catch((e)=>done(e));
-        },5000);
+                }).catch((e) => done(e));
+            }).catch((e) => done(e));
+        }, 5000);
     });
 
 
-    it("Should correctly disconnect from Redis instance", (done)=>{
-        setTimeout(()=>{
-                redisCache.disconnect();
-                redisCache.get("data").then((_)=>{
-                    done(Error("Expected to fail"))
-                }).catch((e)=>done());
-        },5000);
-        
+    it("Shoud correctly produce & subscribe to events", (done) => {
+        setTimeout(() => {
+            new Promise(async(resolve) => {
+                redisCache.subscribe(TEST_EVENT_NAME, (data: SubscribedData) => {
+                    console.log("RECEIVED MSG");
+                    console.log(data);
+                    resolve(data);
+                });
+                redisCache.produce(TEST_EVENT_NAME, JSON.stringify(TEST_MESSAGE)).then(()=>{
+                    console.log("SENT MSG");
+                }).catch(e=>{
+                    done(e);
+                })
+            }).then((message:any)=>{
+                console.log("RECV:");
+                console.log(message);
+                if(message !== TEST_MESSAGE){
+                    done(Error(""));
+                }else{
+                    done();
+                }
+            });
+        }, 5000);
+    })
+
+
+    it("Should correctly disconnect from Redis instance", (done) => {
+        setTimeout(() => {
+            redisCache.disconnect();
+            redisCache.get("data").then((_) => {
+                done(Error("Expected to fail"))
+            }).catch((e) => done());
+        }, 5000);
+
     });
 
 });
