@@ -57,7 +57,6 @@ describe("Tests Redis Cache for functionality", () => {
             const val = "67";
             redisCache.set("data", val).then((_) => {
                 redisCache.get("data").then((res) => {
-                    console.log(`DATA: ${res}`);
                     expect(res.toString()).to.equal(val.toString());
                     done();
                 }).catch((e) => done(e));
@@ -93,20 +92,15 @@ describe("Tests Redis Cache for functionality", () => {
         setTimeout(() => {
             new Promise(async(resolve) => {
                 redisCache.subscribe(TEST_EVENT_NAME, (data: SubscribedData) => {
-                    console.log("RECEIVED MSG");
-                    console.log(data);
                     resolve(data);
                 });
-                redisCache.produce(TEST_EVENT_NAME, JSON.stringify(TEST_MESSAGE)).then(()=>{
-                    console.log("SENT MSG");
+                redisCache.produce(TEST_EVENT_NAME, TEST_MESSAGE).then(()=>{
                 }).catch(e=>{
                     done(e);
                 })
             }).then((message:any)=>{
-                console.log("RECV:");
-                console.log(message);
-                if(message !== TEST_MESSAGE){
-                    done(Error(""));
+                if(message !== JSON.stringify(TEST_MESSAGE)){
+                    done(Error("PubSub data does not match"));
                 }else{
                     done();
                 }

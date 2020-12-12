@@ -32,9 +32,12 @@ export interface Cache extends Datasource{
 export interface WsSessionCache extends Cache{};
 
 export interface Subscriber{
-    subscribe(event: string, subscriber: any);
+    subscribe(event: string, subscriber: any):any;
+    unsubscribe(events?:string[]):any;
+    getSubscriber():any;
 }
 
 export interface Producer{
     produce(event: string, data: SubscribedData): Promise<void>;
+    getProducer():any;
 }

@@ -3,11 +3,24 @@ import { Cache, Subscriber, Producer, SubscribedData } from "./datasource.interf
 
 export class RedisCache implements Cache, Subscriber, Producer {
 
+
     constructor(
         private client: RedisClient, 
         private pubClient: RedisClient, 
         private subClient: RedisClient
         ) { }
+        
+    getSubscriber() {
+        return this.subClient;
+    }
+
+    getProducer() {
+        return this.pubClient;
+    }
+
+    unsubscribe(events?: string[]) {
+        return this.subClient.unsubscribe(events);
+    }
 
     produce(event: string, data: SubscribedData): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -21,9 +34,8 @@ export class RedisCache implements Cache, Subscriber, Producer {
     }
 
     subscribe(event: string, subscriber: any) {
-        this.subClient.subscribe(event, (data) => {
-            console.log("XMSK")
-            console.log(data);
+        this.subClient.subscribe(event);
+        this.subClient.on("message", (channel:string, data:string)=>{
             subscriber(data);
         })
     }

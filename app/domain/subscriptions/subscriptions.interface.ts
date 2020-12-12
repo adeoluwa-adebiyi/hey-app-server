@@ -3,16 +3,18 @@ import { EachMessagePayload } from "kafkajs";
 
 export type MessageBrokerEvent = string;
 
-export interface GenericMessageBrokerConsumerParams{
+export interface GenericMessageBrokerConsumerParams {
     event: string;
     message: string;
 }
 
-export interface KafkaMessageBrokerConsumerParams extends EachMessagePayload{}
+export interface KafkaMessageBrokerConsumerParams extends EachMessagePayload { }
 
-export interface MessageBrokerSubscriptionSpec{
-    getEvent():MessageBrokerEvent;
-    consumer(params: MessageBrokerConsumerParams):void;
+export interface RedisBrokerConsumerParams extends GenericMessageBrokerConsumerParams { };
+
+export interface MessageBrokerSubscriptionSpec {
+    getEvent(): MessageBrokerEvent;
+    consumer(params: MessageBrokerConsumerParams): void;
 }
 
-export type MessageBrokerConsumerParams = GenericMessageBrokerConsumerParams | KafkaMessageBrokerConsumerParams;
+export type MessageBrokerConsumerParams = GenericMessageBrokerConsumerParams | KafkaMessageBrokerConsumerParams | RedisBrokerConsumerParams;
