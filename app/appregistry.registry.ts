@@ -59,6 +59,8 @@ import { KafkaJSMessageBroker } from "./server/brokers/kafkajs.broker";
 import { MessageBrokerSubscriptionsManagerSpec } from "./domain/subscriptions/manager.interface";
 import { KafkaSubscriptionManager } from "./domain/subscriptions/kafkajs-subscription.manager";
 import { KChatMessageNotifierMessageBrokerSubscription } from "./domain/subscriptions/ssubscriptions";
+import { RedisMessageBroker } from "./server/brokers/redis.broker";
+import { RedisSubscriptionsManager } from "./domain/subscriptions/redis-subscription.manager";
 
 
 const APP_SECRET = SECRET;
@@ -139,11 +141,11 @@ const webServer: ExpressWebServer = new ExpressWebServer(container.resolve("Auth
 
 container.register<RoutableWebServerSpec>("RoutableWebServerSpec", { useValue: webServer });
 
-const broker: KafkaMessageBrokerSpec =  new KafkaJSMessageBroker(kafka);
+const broker: MessageBrokerSpec =  new RedisMessageBroker(REDIS_CACHE);
 
 container.register<MessageBrokerSpec>("MessageBrokerSpec", { useValue:  broker});
 
-container.register<MessageBrokerSubscriptionsManagerSpec>("MessageBrokerSubscriptionsManagerSpec", { useValue: new KafkaSubscriptionManager(kafka) });
+container.register<MessageBrokerSubscriptionsManagerSpec>("MessageBrokerSubscriptionsManagerSpec", { useValue: new RedisSubscriptionsManager(REDIS_CACHE) });
 
 const webSocketServer = createWebSocketServer(
     container.resolve<TokenAuthSpec>("TokenAuthSpec"),
