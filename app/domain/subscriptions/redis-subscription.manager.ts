@@ -27,7 +27,15 @@ export class RedisSubscriptionsManager implements MessageBrokerSubscriptionsMana
     }
 
     disconnectSubscription(event: string): Promise<void> {
-        throw new Error("Method not implemented.");
+        return new Promise((resolve, reject)=>{
+            this.redisClient.getSubscriber().unsubscribe(event, (err:Error, reply:string)=>{
+                if(err){
+                    reject(err);
+                }else{
+                    resolve();
+                }
+            })
+        });
     }
 
     disconnectSubscriptions(): Promise<void> {
