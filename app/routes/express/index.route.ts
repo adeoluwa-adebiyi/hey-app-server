@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "../../appregistry.registry";
 import { Request, Response, Router } from "express";
 import { RegisterUserUsecase } from "../../domain/usecases/register-user.usecase";
 import { REGISTER_USER_ENDPOINT } from "../urls";
@@ -14,7 +15,7 @@ const router:Router = Router();
 
 
 router.get("/", (req: Request, res: Response)=>{
-    res.send("Hello World");
+    res.send("Service Running");
 })
 
 

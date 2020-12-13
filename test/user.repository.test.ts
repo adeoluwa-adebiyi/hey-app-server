@@ -3,16 +3,11 @@ import "../app/appregistry.registry";
 import { expect } from "chai";
 import { container } from "tsyringe";
 import { UserModel } from "../app/domain/entities/user.model";
-import Knex from "knex-ts";
-import { HOST, PORT, DB_URI } from "../app/config/app.config";
-import { KnexClient } from "../app/data/datasources/knexsql.database";
 import { DatabaseSpec } from "../app/data/datasources/datasource.interface";
 import fs from "fs";
 import path from "path";
 import { ObjectNotFoundException } from "../app/common/exceptions/object-not-found.exception";
-import { exit } from "process";
 import { USER_REGISTRATION_CREDENTIALS } from "./test.data";
-import { afterTestRoutine, beforeTestRoutine } from "./test-routines";
 import { emptyDB, seedDB } from "../seed_db";
 import { UserRepositorySpec } from "../app/domain/repositories/repository.interface";
 

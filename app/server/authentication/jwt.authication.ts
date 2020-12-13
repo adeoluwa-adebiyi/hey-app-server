@@ -18,29 +18,20 @@ export class JWTAuthentication implements AuthenticationSpec<express.RequestHand
         const requestHandler: express.RequestHandler = async(req:any, res:any, next)=>{
             let exempted = false;
 
-            console.log("URL:");
-            console.log(req.originalUrl);
-
-            console.log("DATA:");
-            console.log(req.body);
-
             try{
 
                 try{
                     if(req.header("Authorization")){
-                        console.log(req.header("Authorization"));
                         const bearer = req.header("Authorization").split(" ")[1];
                         const decoded:any = await this.tokenAuthentication.decodeToken(bearer);
                         const user:UserModel = await this.userRepository.getUserById({id: decoded.body.sub});
-                        console.log(user.toJSON());;
                         req.user = user;
                     }else{
                         req.user = null
                     }
 
                 }catch(e){
-                    console.log("ERROR:");
-                    console.log(e);
+
                 }
 
                 for(let route of exemptedRoutes){
@@ -51,7 +42,6 @@ export class JWTAuthentication implements AuthenticationSpec<express.RequestHand
                 }
                 
                 if(exempted){
-                    console.log("EXEMPTED")
                     next();
                     return;
                 }

@@ -1,0 +1,3 @@
+interface JwtLoginData {
+    jwt: String;
+}

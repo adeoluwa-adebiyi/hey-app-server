@@ -3,7 +3,6 @@ import "./app/appregistry.registry";
 import fs from "fs";
 import path from "path";
 import { CHATROOM_TABLE_NAME, CHAT_ROOM_MESSAGE_TABLE_NAME, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USERNAME, USER_TABLE_NAME } from  "./app/config/app.config";
-import { exit } from "process";
 import { DatabaseSpec } from "./app/data/datasources/datasource.interface";
 import { container } from "tsyringe";
 import { TokenAuthSpec } from "./app/server/contracts/tokenauthspec.interface";
@@ -51,7 +50,7 @@ export const emptyDB = async(db: DatabaseSpec): Promise<any> =>{
 
     return db.connect().then((connMsg:any)=>{
         return Promise.all([
-            
+            db.getConnector().query(`DELETE FROM ${_CHAT_ROOM_MESSAGE_TABLE_NAME}`),
             db.getConnector().query(`DELETE FROM ${CHATROOM_TABLE_NAME}`),
             db.getConnector().query(`DELETE FROM ${_USER_TABLE_NAME}`)
 

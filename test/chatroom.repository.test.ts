@@ -26,13 +26,24 @@ let users:Array<UserModel> = [];
 
 describe("Tests ChatRoomRepository", ()=>{
 
+    // beforeEach((done)=>{
+    //     users = JSON.parse(fs.readFileSync(path.resolve("./app/data/fixtures/users.fixture.json")).toString()).users.map((user:any)=>new UserModel().fromJSON(user));
+    //     database.connect().then((v:any)=>{
+    //          emptyDB(database).then((q:any)=>{
+    //              seedDB(database).then((res:any)=>{
+    //                 done();
+    //             })
+    //         });
+    //     })
+    // });
+
     beforeEach((done)=>{
         users = JSON.parse(fs.readFileSync(path.resolve("./app/data/fixtures/users.fixture.json")).toString()).users.map((user:any)=>new UserModel().fromJSON(user));
-        database.connect().then((v:any)=>{
-             emptyDB(database).then((q:any)=>{
-                 seedDB(database).then((res:any)=>{
+        database.connect().then(()=>{
+            emptyDB(database).then(()=>{
+                seedDB(database).then(()=>{
                     done();
-                })
+                });
             });
         })
     });
@@ -52,7 +63,7 @@ describe("Tests ChatRoomRepository", ()=>{
                     }).catch(e=>done(e));
                 }).catch(e=>done(e));
             }).catch(e=>done(e));
-        }).catch(e=>done(e)), 1000);
+        }).catch(e=>done(e)), 5000);
         
     });
 
@@ -80,7 +91,7 @@ describe("Tests ChatRoomRepository", ()=>{
                     console.log(e);
                     done(e);
                 });    
-            }, 1000);
+            }, 5000);
     });
 
 
@@ -102,7 +113,7 @@ describe("Tests ChatRoomRepository", ()=>{
                 }).catch((e:any)=>{done(e)});
             })
             .catch((e:any)=>done(e));
-        },1000);
+        },5000);
     });
 
     it("Should retrieve user chatroom by ID", (done)=>{
@@ -121,7 +132,7 @@ describe("Tests ChatRoomRepository", ()=>{
                 }).catch((e:any)=>{done(e)});
             })
             .catch((e:any)=>done(e));
-        },1000);
+        },5000);
     });
 
     it("Should delete user chatrooms by roomKey", (done)=>{
@@ -138,7 +149,7 @@ describe("Tests ChatRoomRepository", ()=>{
                 }).catch((e:any)=>{done(e)});
             })
             .catch((e:any)=>done(e));
-        },1000);
+        },5000);
         
     });
 
@@ -161,7 +172,7 @@ describe("Tests ChatRoomRepository", ()=>{
                 }).catch((e:any)=>{done(e)});
             })
             .catch((e:any)=>done(e));
-        },1000);
+        },5000);
     });
 
 });
