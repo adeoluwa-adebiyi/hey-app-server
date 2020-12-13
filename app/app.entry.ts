@@ -15,7 +15,7 @@ import { ExpressWebServer } from "./server/express.webserver";
 import { Server as WsServer } from "socket.io";
 import { WebSocketServerSpec } from "./server/core/websocket/websocket.webserver";
 import { MessageBrokerSubscriptionsManagerSpec } from "./domain/subscriptions/manager.interface";
-import { KChatMessageNotifierMessageBrokerSubscription } from "./domain/subscriptions/ssubscriptions";
+import { RedisChatMessageNotifierMessageBrokerSubscription } from "./domain/subscriptions/ssubscriptions";
 
 
 const database: DatabaseSpec = container.resolve("DatabaseSpec");
@@ -40,7 +40,7 @@ database.connect().then(()=>{
   const subscriptionManager: MessageBrokerSubscriptionsManagerSpec = container.resolve("MessageBrokerSubscriptionsManagerSpec");
 
   subscriptionManager.registerSubscriptions([
-      new KChatMessageNotifierMessageBrokerSubscription()
+      new RedisChatMessageNotifierMessageBrokerSubscription()
   ]);
 
   (<WsServer>container.resolve<WebSocketServerSpec>("WebSocketServerSpec")).listen(server);

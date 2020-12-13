@@ -75,7 +75,7 @@ export const createWebSocketServer = (
     }
 
 
-    const notifyUserInternalServiceError = async (socket: Socket, messages=["Internal Error"]) => {
+    const notifyUserInternalServiceError = async (socket: Socket, messages = ["Internal Error"]) => {
         const interalErrorMsg: WsInternalErrorMsg = {
             type: "error",
             messages
@@ -90,29 +90,29 @@ export const createWebSocketServer = (
 
     const beginWebSocketService = (socket: Socket) => {
 
-        socket.on(WS_CHATROOM_MESSAGE_SEND_EVENT, async(msg) => {
+        socket.on(WS_CHATROOM_MESSAGE_SEND_EVENT, async (msg) => {
             console.log("SENT MESSAGE:");
-            try{
+            try {
                 console.log("RECEIVED MESSAGE:");
                 console.log(msg);
                 const messagePayload: WsClientSendMessagePayload = JSON.parse(msg);
                 const { chatRoomId, sender } = messagePayload;
                 const chatRooms: ChatRoomModel[] = await chatRoomRepo.getUserChatRoomsByRoomKey(chatRoomId);
-                const notificationRecipientId: number = chatRooms[0].userId === sender? chatRooms[1].userId : chatRooms[0].userId;
+                const notificationRecipientId: number = chatRooms[0].userId === sender ? chatRooms[1].userId : chatRooms[0].userId;
                 new PostChatRoomMessageUsecase().execute(
                     <PostChatRoomMessageParams>{
                         ...messagePayload
                     }
-                ).then((response: PostChatRoomMessageUsecaseResponse)=>{
-                    
+                ).then((response: PostChatRoomMessageUsecaseResponse) => {
+
                     messageBroker.publish(<Message>{
                         data: <NotifyNewMessage>{
-                            destination: {id: notificationRecipientId},
+                            destination: { id: notificationRecipientId },
                             message: response.chatRoomMessage
                         }
                     }, MB_NOTIFY_NEW_MESSAGE_EVENT)
                 });
-            }catch(e){
+            } catch (e) {
                 console.log(e);
                 notifyUserInternalServiceError(socket);
             }

@@ -15,7 +15,7 @@ const router:Router = Router();
 
 
 router.get("/", (req: Request, res: Response)=>{
-    res.send("Hello World");
+    res.send("Service Running");
 })
 
 
