@@ -72,8 +72,9 @@ describe("Tests Redis broker for functionality", () => {
                     const { messages } = serialized;
                     const msg = messages;
                     expect(JSON.stringify(msg[0])).to.equal(JSON.stringify(TEST_MESSAGE.messages[0]));
-                    consumer.unsubscribe(TEST_MESSAGE_EVENT);
-                    done();
+                    consumer.unsubscribe(TEST_MESSAGE_EVENT, (err:Error, reply:string)=>{
+                        done();
+                    });
                 });
 
                 broker.publish({ data: TEST_MESSAGE }, TEST_MESSAGE_EVENT);
@@ -93,7 +94,7 @@ describe("Tests Redis broker for functionality", () => {
                 const { messages } = serialized;
                 const msg = messages;
                 expect(JSON.stringify(msg[0])).to.equal(JSON.stringify(TEST_MESSAGE.messages[0]));
-                consumer.unsubscribe(TEST_MESSAGE_EVENT);
+                (<RedisMessageBroker>broker).disconnect();
                 done();
             }catch(e){
                 done(e);

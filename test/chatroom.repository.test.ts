@@ -26,13 +26,24 @@ let users:Array<UserModel> = [];
 
 describe("Tests ChatRoomRepository", ()=>{
 
+    // beforeEach((done)=>{
+    //     users = JSON.parse(fs.readFileSync(path.resolve("./app/data/fixtures/users.fixture.json")).toString()).users.map((user:any)=>new UserModel().fromJSON(user));
+    //     database.connect().then((v:any)=>{
+    //          emptyDB(database).then((q:any)=>{
+    //              seedDB(database).then((res:any)=>{
+    //                 done();
+    //             })
+    //         });
+    //     })
+    // });
+
     beforeEach((done)=>{
         users = JSON.parse(fs.readFileSync(path.resolve("./app/data/fixtures/users.fixture.json")).toString()).users.map((user:any)=>new UserModel().fromJSON(user));
-        database.connect().then((v:any)=>{
-             emptyDB(database).then((q:any)=>{
-                 seedDB(database).then((res:any)=>{
+        database.connect().then(()=>{
+            emptyDB(database).then(()=>{
+                seedDB(database).then(()=>{
                     done();
-                })
+                });
             });
         })
     });

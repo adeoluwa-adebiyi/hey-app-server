@@ -101,7 +101,7 @@ const kafka = new Kafka(<KafkaConfig>{
     brokers: KAFKA_BROKERS.split(","),
     ssl: true,
     sasl: {
-        mechanism: "plain",
+        mechanism: "scram-sha-256",
         username: KAFKA_USERNAME,
         password: KAFKA_PASSWORD
     },
