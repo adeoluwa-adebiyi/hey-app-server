@@ -64,13 +64,8 @@ describe("Tests RedisCacheSubsriptionManager for functionality", () => {
                     console.log(messages);
                     const msg = messages;
                     expect(JSON.stringify(msg[0])).to.equal(JSON.stringify(TEST_MESSAGE.messages[0]));
-                    Promise.all([
-                        (<RedisMessageBroker>broker).disconnect(),
-                        new Promise((resolve)=>{redisSubscriptionsManager.disconnectSubscriptions(); resolve()})
-                    ]).then((_)=>{
-                        done();
-                    })
-                    
+                    done();
+                    (<RedisMessageBroker>broker).disconnect();
                 }
 
             }
