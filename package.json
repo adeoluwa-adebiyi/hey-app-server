@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start_dev": "npx ts-node app/app.entry.ts",
+    "start_dev": "cat env.dev > .env.dev;npx ts-node app/app.entry.ts",
     "test": "cat env.dev > .env.dev; npx ts-node db.ts; npx mocha -r ts-node/register test/**/*.test.ts --no-timeout --exit",
     "start_dev:watch": "npx nodemon --watch 'app/**/*.ts' --ignore 'app/**/*.spec.ts' --exec 'ts-node' app/app.entry.ts"
   },
