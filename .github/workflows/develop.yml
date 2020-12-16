@@ -8,7 +8,7 @@ on:
   release:
     types: [created]
 
-name: Deploy to Amazon ECS
+name: Deploy to Heroku
 
 jobs:
   test:
