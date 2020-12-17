@@ -25,8 +25,6 @@ export class JWTAuthentication implements AuthenticationSpec<express.RequestHand
 
                 try{
 
-                    console.log("ATTEMPT");
-
                     // JWT Header Auth
                     if(req.header("Authorization")){
                         const bearer = req.header("Authorization").split(" ")[1];

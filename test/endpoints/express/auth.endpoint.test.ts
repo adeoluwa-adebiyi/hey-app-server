@@ -164,8 +164,6 @@ describe("Test Auth: /auth endpoint", () => {
 
                 }).then((response: AxiosResponse) => {
 
-                    console.log("Cookies:");
-
                     const cookies = response.headers["set-cookie"];
 
                     const {  access_jwt } = (parse(cookies.toString()));
@@ -179,7 +177,56 @@ describe("Test Auth: /auth endpoint", () => {
                             "Cookie": `${ACCESS_JWT_COOKIE_NAME}=${authToken}`
                         }
                     })
-                    // .set("Cookie", `${ACCESS_JWT_COOKIE_NAME}=${authToken}`)
+                    .then((response)=>{
+                       expect(response.status).to.equal(200);
+                       webServer.close();
+                        done();
+                    }).catch((e)=>done(e));
+
+
+
+                }).catch((e) => {
+                    console.log(e);
+                    done(e);
+                })
+
+            }).catch((e: Error) => {
+                done(e);
+            });
+        }), 1000);
+    });
+
+    it("Should validate header tokens for registered users", (done) => {
+        webServer.listen(80, "127.0.0.1");
+        setTimeout(() => userRepository.deleteUser({ email: userLoginCredentials.username }).then(() => {
+
+            new RegisterUserUsecase().execute({ ...userLoginCredentials, email: userLoginCredentials.username }).then((userRegResponse: UserRegistrationResponse) => {
+
+                const { email, password } = userCredentials;
+
+                Axios(<AxiosRequestConfig>{
+                    method: 'post',
+                    url: "http://127.0.0.1" + AUTH_WEB_USER_ROUTE_ENDPOINT,
+                    data: {
+                        username: email,
+                        password
+                    },
+
+                }).then((response: AxiosResponse) => {
+
+                    const cookies = response.headers["set-cookie"];
+
+                    const {  access_jwt } = (parse(cookies.toString()));
+
+                    const authToken = access_jwt;
+
+                    Axios({
+                        method:"post",
+                        url: "http://127.0.0.1/auth/test",
+                        headers:{
+                            "Authorization": `Bearer ${authToken}`
+                        }
+                    })
                     .then((response)=>{
                        expect(response.status).to.equal(200);
                        webServer.close();

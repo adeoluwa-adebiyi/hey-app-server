@@ -70,7 +70,6 @@ router.post("/web", async(req:Request, res: Response)=>{
 
 router.post("/test", async(req:Request, res: Response)=>{
     try{
-        console.log("ENDPOINT");
         res.sendStatus(200);
     }catch(e){
         console.log(e)
