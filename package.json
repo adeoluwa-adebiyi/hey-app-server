@@ -24,6 +24,7 @@
   "dependencies": {
     "@types/argon2": "^0.15.0",
     "@types/axios": "^0.14.0",
+    "@types/cors": "^2.8.9",
     "@types/dotenv": "^8.2.0",
     "@types/faker": "^5.1.2",
     "@types/kafkajs": "^1.9.0",
@@ -42,6 +43,7 @@
     "axios": "^0.20.0",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
+    "cors": "^2.8.5",
     "custom-env": "^2.0.1",
     "dotenv": "^8.2.0",
     "dts-gen": "^0.6.0",

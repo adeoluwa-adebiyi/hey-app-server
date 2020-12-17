@@ -48,7 +48,9 @@ describe("Tests Redis Cache for functionality", () => {
 
     beforeEach(() => {
         const val = 89;
-        redisCache.set("data", val);
+        redisCache.reset().then(async ()=>{
+            await redisCache.set("data", val);
+        })
     });
 
     it("Should set key-value relationships correctly", (done) => {
@@ -94,10 +96,6 @@ describe("Tests Redis Cache for functionality", () => {
                 redisCache.subscribe(TEST_EVENT_NAME, (data: SubscribedData) => {
                     resolve(data);
                 });
-                redisCache.produce(TEST_EVENT_NAME, TEST_MESSAGE).then(()=>{
-                }).catch(e=>{
-                    done(e);
-                })
             }).then((message:any)=>{
                 if(message !== JSON.stringify(TEST_MESSAGE)){
                     done(Error("PubSub data does not match"));
@@ -105,6 +103,13 @@ describe("Tests Redis Cache for functionality", () => {
                     done();
                 }
             });
+
+            setTimeout(()=>{
+                redisCache.produce(TEST_EVENT_NAME, TEST_MESSAGE).then(()=>{
+                }).catch(e=>{
+                    done(e);
+                })
+            },10000)
         }, 5000);
     })
 

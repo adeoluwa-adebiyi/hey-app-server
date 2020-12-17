@@ -46,6 +46,23 @@ const redisSubscriptionsManager: RedisSubscriptionsManager = new RedisSubscripti
 
 describe("Tests RedisCacheSubsriptionManager for functionality", () => {
 
+    before(async () => {
+        await redisCache.reset();
+        await new Promise((resolve) => {
+            redisCache.getProducer().flushall((err: Error, reply: string) => {
+                if (!err)
+                    resolve(true);
+            })
+        });
+
+        await new Promise((resolve) => {
+            redisCache.getSubscriber().flushall((err: Error, reply: string) => {
+                if (!err)
+                    resolve(true);
+            })
+        });
+    })
+
     it("Should publish messages to topics", (done) => {
 
         setTimeout(() => {
@@ -72,8 +89,8 @@ describe("Tests RedisCacheSubsriptionManager for functionality", () => {
 
             redisSubscriptionsManager.registerSubscriptions([
                 new TestKMessageBrokerSubscription()
-            ]).then(async() => {
-               broker.publish({data:TEST_MESSAGE}, TEST_MESSAGE_EVENT);
+            ]).then(async () => {
+                broker.publish({ data: TEST_MESSAGE }, TEST_MESSAGE_EVENT);
             });
 
         }, 5000);

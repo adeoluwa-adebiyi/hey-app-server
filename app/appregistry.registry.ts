@@ -61,6 +61,7 @@ import { KafkaSubscriptionManager } from "./domain/subscriptions/kafkajs-subscri
 import { KChatMessageNotifierMessageBrokerSubscription } from "./domain/subscriptions/ssubscriptions";
 import { RedisMessageBroker } from "./server/brokers/redis.broker";
 import { RedisSubscriptionsManager } from "./domain/subscriptions/redis-subscription.manager";
+import cors from "cors";
 
 
 const APP_SECRET = SECRET;
@@ -138,6 +139,10 @@ container.register<SocketUserIdSessionMapSpec>("SocketUserIdSessionMapSpec", { u
 const webServer: ExpressWebServer = new ExpressWebServer(container.resolve("AuthenticationSpec<<express.RequestHandler>>"), EXEMPTED_ROUTES);
 
 (<MiddlewareConfigurable>webServer).addMiddleware(bodyParser.json());
+(<MiddlewareConfigurable>webServer).addMiddleware(cors({
+    origin: "*"
+}));
+
 
 container.register<RoutableWebServerSpec>("RoutableWebServerSpec", { useValue: webServer });
 
