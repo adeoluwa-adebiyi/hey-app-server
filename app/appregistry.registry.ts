@@ -62,12 +62,14 @@ import { KChatMessageNotifierMessageBrokerSubscription } from "./domain/subscrip
 import { RedisMessageBroker } from "./server/brokers/redis.broker";
 import { RedisSubscriptionsManager } from "./domain/subscriptions/redis-subscription.manager";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 
 const APP_SECRET = SECRET;
 
 const EXEMPTED_ROUTES: Array<string> = [
     "/auth",
+    "/auth/web",
     "/",
     "/register",
 ]
@@ -139,8 +141,12 @@ container.register<SocketUserIdSessionMapSpec>("SocketUserIdSessionMapSpec", { u
 const webServer: ExpressWebServer = new ExpressWebServer(container.resolve("AuthenticationSpec<<express.RequestHandler>>"), EXEMPTED_ROUTES);
 
 (<MiddlewareConfigurable>webServer).addMiddleware(bodyParser.json());
+
+(<MiddlewareConfigurable>webServer).addMiddleware(cookieParser());
+
 (<MiddlewareConfigurable>webServer).addMiddleware(cors({
-    origin: "*"
+    origin: "*",
+    credentials: true
 }));
 
 

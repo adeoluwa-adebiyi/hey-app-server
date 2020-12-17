@@ -42,3 +42,9 @@ export const USER_TABLE_NAME = "bb";
 export const CHATROOM_TABLE_NAME = "chatroom";
 
 export const CHAT_ROOM_MESSAGE_TABLE_NAME = "chatroom_message";
+
+export const ACCESS_JWT_COOKIE_NAME = "access_jwt";
+
+export const REFRESH_JWT_COOKIE_NAME = "refresh_jwt"
+
+export const JWT_COOKIE_EXPIRY = 90000000;
