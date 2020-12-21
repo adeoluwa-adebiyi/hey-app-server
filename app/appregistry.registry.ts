@@ -145,7 +145,7 @@ const webServer: ExpressWebServer = new ExpressWebServer(container.resolve("Auth
 (<MiddlewareConfigurable>webServer).addMiddleware(cookieParser());
 
 (<MiddlewareConfigurable>webServer).addMiddleware(cors({
-    origin: "*",
+    origin: ["http://localhost:3000"],
     credentials: true
 }));
 
