@@ -1,16 +1,16 @@
 import { StringLiteral } from "typescript";
 import { Serializable } from "../../common/core/contracts/serializable.interface";
 
-export interface UserAuthId{
+export interface UserAuthId {
     id?: number;
     email?: string;
 }
 
-export interface UserWithAuthCredJSON extends UserJSON{
+export interface UserWithAuthCredJSON extends UserJSON {
     passwordHash: string;
 }
 
-export interface UserJSON{
+export interface UserJSON {
     id?: number;
 
     firstname?: string;
@@ -21,26 +21,30 @@ export interface UserJSON{
 
     email: string;
 
-    pic: string;
+    pic?: string;
+
+    username?: string;
 }
 
 export class UserModel implements Serializable<UserModel>{
 
-     id: number;
+    id: number;
 
-     firstname: string;
+    firstname: string;
 
-     lastname: string;
+    lastname: string;
 
-     dob: Date;
+    dob: Date;
 
-     email: string;
+    email: string;
 
-     passwordHash: string;
+    passwordHash: string;
 
-     pic: string;
+    pic: string;
 
-    constructor(id:number=null, firstname: string=null, lastname: string=null, dob: Date=null, email: string=null, passwordHash:string = null, pic:string=null){
+    username?: string;
+
+    constructor(id: number = null, firstname: string = null, lastname: string = null, dob: Date = null, email: string = null, passwordHash: string = null, pic: string = null, username: string = null) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -48,6 +52,7 @@ export class UserModel implements Serializable<UserModel>{
         this.email = email;
         this.passwordHash = passwordHash;
         this.pic = pic;
+        this.username = username;
     }
 
     toJSON(): UserJSON {
@@ -57,8 +62,9 @@ export class UserModel implements Serializable<UserModel>{
             lastname: this.lastname,
             dob: this.dob.toLocaleDateString(),
             email: this.email,
-            pic: this.pic
-        } 
+            pic: this.pic,
+            username: this.username
+        }
     }
 
     toJSONWithAuthCred(): UserWithAuthCredJSON {
@@ -69,11 +75,12 @@ export class UserModel implements Serializable<UserModel>{
             dob: this.dob.toLocaleDateString(),
             email: this.email,
             passwordHash: this.passwordHash,
-            pic: this.pic
-        } 
+            pic: this.pic,
+            username: this.username
+        }
     }
-    
+
     fromJSON(json: any): UserModel {
-        return new UserModel(json.id, json.firstname, json.lastname, new Date(json.dob), json.email, json.passwordhash?json.passwordhash:null,json.pic?json.pic:null);
+        return new UserModel(json.id, json.firstname, json.lastname, new Date(json.dob), json.email, json.passwordhash ? json.passwordhash : null, json.pic ? json.pic : null, json.username ? this.username : null);
     }
 }
