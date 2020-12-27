@@ -18,7 +18,7 @@ const DELETE_USER_BY_ID_QUERY = `DELETE FROM "${USER_TABLE}" WHERE id = $1`;
 const GET_USER_BY_ID_QUERY = `SELECT * FROM "${USER_TABLE}" WHERE id = $1`;
 const GET_USER_BY_EMAIL_QUERY = `SELECT * FROM "${USER_TABLE}" WHERE email = $1`;
 const GET_ALL_USERS_QUERY = `SELECT * FROM "${USER_TABLE}"`;
-const CREATE_NEW_USER_QUERY = `INSERT into "${USER_TABLE}"(firstname, lastname, dob, email, passwordhash, pic) VALUES($1, $2, $3, $4, $5, $6) RETURNING *`;
+const CREATE_NEW_USER_QUERY = `INSERT into "${USER_TABLE}"(firstname, lastname, dob, email, passwordhash, pic, username) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
 
 
 @autoInjectable()
@@ -67,9 +67,9 @@ export class PgSQLUserRepository implements UserRepositorySpec{
     }
 
     async createUser(userCredentials: UserWithAuthCredJSON): Promise<UserModel> {
-        const { firstname, lastname, dob, email, passwordHash, pic } = userCredentials;
+        const { firstname, lastname, dob, email, passwordHash, pic, username } = userCredentials;
         const response = await (
-        this.getDatabaseConnector().one(CREATE_NEW_USER_QUERY,[ firstname, lastname, dob, email, passwordHash, pic ]));
+        this.getDatabaseConnector().one(CREATE_NEW_USER_QUERY,[ firstname, lastname, dob, email, passwordHash, pic, username ]));
         return new UserModel().fromJSON( response );
     }
     

@@ -34,9 +34,9 @@ export const seedDB = (async(db: DatabaseSpec) : Promise<any>=>{
             }else{
                 const json = JSON.parse(data.toString());
                 for(let data of json["users"]){
-                    const { firstname, lastname, dob, email, passwordHash=await passwordHashAlg.hashPassword(data.password) } = data;
-                    const values = [firstname,lastname,dob,email,passwordHash];
-                    await db.getConnector().query(`INSERT into ${_USER_TABLE_NAME}(firstname, lastname, dob, email, passwordhash) VALUES( $1, $2, $3, $4, $5 )`, values)
+                    const { firstname, lastname, dob, email, passwordHash=await passwordHashAlg.hashPassword(data.password), username, pic } = data;
+                    const values = [firstname,lastname,dob,email,passwordHash, username, pic];
+                    await db.getConnector().query(`INSERT into ${_USER_TABLE_NAME}(firstname, lastname, dob, email, passwordhash, username, pic) VALUES( $1, $2, $3, $4, $5, $6, $7 )`, values)
 
                 }
             }

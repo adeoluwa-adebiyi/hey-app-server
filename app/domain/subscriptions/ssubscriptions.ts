@@ -46,7 +46,7 @@ export class RedisChatMessageNotifierMessageBrokerSubscription implements Messag
         const { message } = params;
         console.log("BROKER:");
         console.log(message);
-        const msg: NotifyNewMessage = JSON.parse(message).data;
+        const msg: NotifyNewMessage = JSON.parse(message);
         console.log(msg);
         const { destination } = msg;
         await this.userNotifier.notifyUser(destination, msg.message);

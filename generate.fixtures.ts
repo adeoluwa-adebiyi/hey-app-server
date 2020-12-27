@@ -27,7 +27,9 @@ const create_fake_user = (index:number)=>{
         lastname: faker.name.lastName(),
         dob: `${date.getFullYear()}-${(date.getMonth()+1)>=9?(date.getMonth()+1):("0"+(date.getMonth()+1).toString())}-${date.getDate()}`,
         email: faker.internet.email(),
-        password: "easylogin"
+        password: "easylogin",
+        username: faker.name.firstName().toLowerCase(),
+        pic: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVkEgWml5fPBeNtfwwI2_RkWCWE5dRUW9Riw&usqp=CAU"
     }
 }
 

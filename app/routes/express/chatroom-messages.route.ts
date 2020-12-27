@@ -12,7 +12,6 @@ router.get("/:id", async(req: AppRequest, res: Response)=>{
         const {id} = req.params;
         const chatRoomId =  id;
         const { offset=0, limit=50} = req.query;
-        // offset=0, limit=0
         if(!user)
             throw Error("Authorization needed");
 

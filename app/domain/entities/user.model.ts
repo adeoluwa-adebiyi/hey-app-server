@@ -81,6 +81,6 @@ export class UserModel implements Serializable<UserModel>{
     }
 
     fromJSON(json: any): UserModel {
-        return new UserModel(json.id, json.firstname, json.lastname, new Date(json.dob), json.email, json.passwordhash ? json.passwordhash : null, json.pic ? json.pic : null, json.username ? this.username : null);
+        return new UserModel(json.id, json.firstname, json.lastname, new Date(json.dob), json.email, json.passwordhash ? json.passwordhash : null, json.pic ? json.pic : null, json.username ? json.username : null);
     }
 }

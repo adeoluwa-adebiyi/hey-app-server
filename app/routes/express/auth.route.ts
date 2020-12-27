@@ -47,9 +47,14 @@ router.post("/web", async(req:Request, res: Response)=>{
     try{
         const params = req.body;
         const response = await new AuthenticateUserUsecase().execute({...params});
+        res.cookie("SameSite", "None",{secure:true});
         res.cookie(AUTH_COOKIE_NAME, response.accessToken, {maxAge: AUTH_COOKIE_EXPIRY, httpOnly: true, secure: true });
         res.cookie(REFRESH_AUTH_COOKIE_NAME, response.refreshToken, {maxAge: AUTH_COOKIE_EXPIRY, httpOnly: true, secure: true });
-        res.sendStatus(200);
+        res.send({
+            jwt: {
+                ...response
+            }
+        });
     }catch(e){
         console.log(e)
         if(e instanceof InvalidLoginCredentialsException){

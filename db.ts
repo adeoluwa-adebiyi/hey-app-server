@@ -30,7 +30,9 @@ db.setConnection(DB_HOST, Number(DB_PORT), DB_USERNAME, DB_NAME, DB_PASSWORD);
                     firstname VARCHAR(100),
                     email VARCHAR(100) UNIQUE NOT NULL,
                     dob DATE,
-                    passwordhash VARCHAR(500) NOT NULL
+                    passwordhash VARCHAR(500) NOT NULL,
+                    username VARCHAR(100),
+                    pic VARCHAR(100)
                 );
     
                 CREATE TABLE IF NOT EXISTS ${CHATROOM_TABLE_NAME}(

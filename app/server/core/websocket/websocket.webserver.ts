@@ -22,6 +22,7 @@ import { Message } from "../../brokers/contracts/message.interface";
 import { ChatRoomRepository } from "../../../data/repositories/postgresql/chatroom.repository";
 import { ChatRoomModel } from "../../../domain/entities/chatroom.model";
 import { NotifyNewMessage } from "../../../domain/types/notify-new-message.type";
+import { ServerOptions } from "socket.io";
 
 
 export const WS_CHATROOM_MESSAGE_NOTIFY_EVENT = "chatroom-message-notify";
@@ -39,7 +40,10 @@ export const createWebSocketServer = (
     chatRoomRepo: ChatRoomRepository
 ): WebSocketServerSpec => {
 
-    const socketServer: Server = new Server();
+    const socketServer: Server = new Server(<Partial<ServerOptions>>{cors: {
+        origin: "http://localhost:3000",
+        credentials: true
+      }});
 
 
     const registerUserSockMaps = async (userCred: UserAuthId, sockId: string): Promise<void> => {
@@ -91,14 +95,15 @@ export const createWebSocketServer = (
     const beginWebSocketService = (socket: Socket) => {
 
         socket.on(WS_CHATROOM_MESSAGE_SEND_EVENT, async (msg) => {
-            console.log("SENT MESSAGE:");
             try {
-                console.log("RECEIVED MESSAGE:");
-                console.log(msg);
                 const messagePayload: WsClientSendMessagePayload = JSON.parse(msg);
                 const { chatRoomId, sender } = messagePayload;
+                console.log("CHATROOM_ID:");
+                console.log(chatRoomId);
                 const chatRooms: ChatRoomModel[] = await chatRoomRepo.getUserChatRoomsByRoomKey(chatRoomId);
-                const notificationRecipientId: number = chatRooms[0].userId === sender ? chatRooms[1].userId : chatRooms[0].userId;
+                console.log("CHATROOMS:");
+                console.log(chatRooms);
+                const notificationRecipientIds: number[] = chatRooms.map((room)=>room.userId);
                 new PostChatRoomMessageUsecase().execute(
                     <PostChatRoomMessageParams>{
                         ...messagePayload
@@ -107,10 +112,16 @@ export const createWebSocketServer = (
 
                     messageBroker.publish(<Message>{
                         data: <NotifyNewMessage>{
-                            destination: { id: notificationRecipientId },
+                            destination: { id: notificationRecipientIds[0] },
                             message: response.chatRoomMessage
                         }
                     }, MB_NOTIFY_NEW_MESSAGE_EVENT)
+                    // messageBroker.publish(<Message>{
+                    //     data: <NotifyNewMessage>{
+                    //         destination: { id: notificationRecipientIds[1] },
+                    //         message: response.chatRoomMessage
+                    //     }
+                    // }, MB_NOTIFY_NEW_MESSAGE_EVENT)
                 });
             } catch (e) {
                 console.log(e);
@@ -127,6 +138,7 @@ export const createWebSocketServer = (
         console.log("ATTEMPT AUTHENTICATION");
 
         socket.on("authenticate", (msg: string) => {
+            console.log("RECEIVE AUTHENTICATION:");
             const serialized: JWTLogin = JSON.parse(msg);
             const { jwt } = serialized;
             new Promise((resolve, reject) => {

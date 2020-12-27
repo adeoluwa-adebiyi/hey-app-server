@@ -41,7 +41,7 @@ export class PostChatRoomMessageUsecase implements UseCaseSpec<Promise<PostChatR
 
 export interface ChatRoomMessagesData{
     chatRoom: ChatRoomResponseJSON,
-    messages: PostChatRoomMessageJSON[]
+    messages: PostChatRoomMessageJSON[];
 }
 
 export interface GetAllChatRoomMessagesUsecaseResponse{
