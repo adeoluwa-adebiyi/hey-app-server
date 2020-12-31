@@ -98,30 +98,20 @@ export const createWebSocketServer = (
             try {
                 const messagePayload: WsClientSendMessagePayload = JSON.parse(msg);
                 const { chatRoomId, sender } = messagePayload;
-                console.log("CHATROOM_ID:");
-                console.log(chatRoomId);
                 const chatRooms: ChatRoomModel[] = await chatRoomRepo.getUserChatRoomsByRoomKey(chatRoomId);
-                console.log("CHATROOMS:");
-                console.log(chatRooms);
-                const notificationRecipientIds: number[] = chatRooms.map((room)=>room.userId);
+                const notificationRecipientIds: number[] =  chatRooms.map((chatRoom:ChatRoomModel)=>chatRoom.userId);
                 new PostChatRoomMessageUsecase().execute(
                     <PostChatRoomMessageParams>{
                         ...messagePayload
                     }
                 ).then((response: PostChatRoomMessageUsecaseResponse) => {
 
-                    messageBroker.publish(<Message>{
+                    Promise.all([...notificationRecipientIds.map((id)=>messageBroker.publish(<Message>{
                         data: <NotifyNewMessage>{
-                            destination: { id: notificationRecipientIds[0] },
+                            destination: { id },
                             message: response.chatRoomMessage
                         }
-                    }, MB_NOTIFY_NEW_MESSAGE_EVENT)
-                    // messageBroker.publish(<Message>{
-                    //     data: <NotifyNewMessage>{
-                    //         destination: { id: notificationRecipientIds[1] },
-                    //         message: response.chatRoomMessage
-                    //     }
-                    // }, MB_NOTIFY_NEW_MESSAGE_EVENT)
+                    }, MB_NOTIFY_NEW_MESSAGE_EVENT))])
                 });
             } catch (e) {
                 console.log(e);
@@ -135,10 +125,8 @@ export const createWebSocketServer = (
 
     socketServer.on("connection", (socket: Socket) => {
 
-        console.log("ATTEMPT AUTHENTICATION");
 
         socket.on("authenticate", (msg: string) => {
-            console.log("RECEIVE AUTHENTICATION:");
             const serialized: JWTLogin = JSON.parse(msg);
             const { jwt } = serialized;
             new Promise((resolve, reject) => {
@@ -153,8 +141,6 @@ export const createWebSocketServer = (
             }).then((token: any) => {
                 const userId = token.body.sub;
                 registerUserSockMaps(<UserAuthId>{ id: userId }, socket.id).then(() => {
-
-                    console.log("REGISTERED USER")
 
                     const successMsg = JSON.stringify(<WsSuccessMsg>{ type: "auth_sucess", data: "Authentication Successful" });
 
@@ -172,7 +158,13 @@ export const createWebSocketServer = (
             }).catch(async e => await notifyUserAuthError(socket));
         });
 
+        socket.on("disconnect",async(_)=>{
+            const userId = await sockToIdMap.get(socket.id);
+            await deregisterUserSockMaps(await sockToIdMap.get(socket.id), socket.id);
+        });
+
     });
+
     const http = createServer((<ExpressWebServer>webServerSpec).application);
     socketServer.listen(http);
     return socketServer;

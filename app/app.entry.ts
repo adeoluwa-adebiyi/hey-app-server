@@ -16,6 +16,7 @@ import { Server as WsServer } from "socket.io";
 import { WebSocketServerSpec } from "./server/core/websocket/websocket.webserver";
 import { MessageBrokerSubscriptionsManagerSpec } from "./domain/subscriptions/manager.interface";
 import { RedisChatMessageNotifierMessageBrokerSubscription } from "./domain/subscriptions/ssubscriptions";
+import { USER_ENDPOINT, UserRouter } from "./routes/express/user.route";
 
 
 const database: DatabaseSpec = container.resolve("DatabaseSpec");
@@ -34,6 +35,8 @@ database.connect().then(()=>{
   httpServer.addRoute(CHATROOMS_ENDPOINT, ChatRoomsRouter);
 
   httpServer.addRoute(CHATROOM_MESSAGES_ENDPOINT, ChatRoomMessagesRouter);
+
+  httpServer.addRoute(USER_ENDPOINT, UserRouter);
 
   const server: Server = createServer((<ExpressWebServer>httpServer).application);
 

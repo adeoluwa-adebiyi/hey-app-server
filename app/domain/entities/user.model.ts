@@ -26,6 +26,9 @@ export interface UserJSON {
     username?: string;
 }
 
+
+export interface UserProfileJSON extends UserJSON{};
+
 export class UserModel implements Serializable<UserModel>{
 
     id: number;

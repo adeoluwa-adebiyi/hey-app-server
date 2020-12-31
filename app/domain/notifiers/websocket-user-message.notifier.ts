@@ -20,6 +20,9 @@ export class WebSocketUserMessageNotifier implements UserMessageNotifierSpec {
     notifyUser(user: UserAuthId, message: any): Promise<void> {
         return new Promise(async (resolve, reject) => {
 
+            console.log("C_USER:");
+            console.log(user);
+
             const connections: Array<string> = await this.userIdSocketSessionMap.get(user);
 
             await Promise.all(connections.map((connection) => {

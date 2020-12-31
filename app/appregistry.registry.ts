@@ -145,8 +145,8 @@ const webServer: ExpressWebServer = new ExpressWebServer(container.resolve("Auth
 (<MiddlewareConfigurable>webServer).addMiddleware(cookieParser());
 
 (<MiddlewareConfigurable>webServer).addMiddleware(cors({
-    allowedHeaders:["X-PINGOTHER", "Content-Type"],
-    origin: ["http://localhost:3000", "http://localhost/socket.io"],
+    allowedHeaders:["X-PINGOTHER", "Content-Type","Authorization"],
+    origin: ["http://localhost:3000", "http://localhost/socket.io","https://soft-fish-100.loca.lt"],
     credentials: true
 }));
 

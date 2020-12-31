@@ -47,10 +47,7 @@ router.post("/web", async(req:Request, res: Response)=>{
     try{
         const params = req.body;
         const response = await new AuthenticateUserUsecase().execute({...params});
-        res.cookie("SameSite", "None",{secure:true});
-        res.cookie(AUTH_COOKIE_NAME, response.accessToken, {maxAge: AUTH_COOKIE_EXPIRY, httpOnly: true, secure: true });
-        res.cookie(REFRESH_AUTH_COOKIE_NAME, response.refreshToken, {maxAge: AUTH_COOKIE_EXPIRY, httpOnly: true, secure: true });
-        res.send({
+        res.cookie(AUTH_COOKIE_NAME, response.accessToken, {maxAge: AUTH_COOKIE_EXPIRY, httpOnly: true, secure: true, sameSite:"none"}).cookie(REFRESH_AUTH_COOKIE_NAME, response.refreshToken, {maxAge: AUTH_COOKIE_EXPIRY, httpOnly: true, secure: true, sameSite:"none" }).send({
             jwt: {
                 ...response
             }
