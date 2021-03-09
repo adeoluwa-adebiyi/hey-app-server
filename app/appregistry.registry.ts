@@ -146,7 +146,7 @@ const webServer: ExpressWebServer = new ExpressWebServer(container.resolve("Auth
 
 (<MiddlewareConfigurable>webServer).addMiddleware(cors({
     allowedHeaders:["X-PINGOTHER", "Content-Type","Authorization"],
-    origin: ["http://localhost:3000", "http://localhost/socket.io","https://soft-fish-100.loca.lt"],
+    origin: ["http://localhost:3000", "http://localhost/socket.io","https://soft-fish-100.loca.lt", "https://hey-mono-web-796orltlu.vercel.app"],
     credentials: true
 }));
 
